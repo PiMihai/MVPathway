@@ -31,14 +31,8 @@ namespace MVPathway.MVVM
             builder.Update(mContainer);
         }
 
-        public static object Resolve(Type type)
-        {
-            return mContainer.Resolve(type);
-        }
+        public static object Resolve(Type type) => mContainer.Resolve(type);
 
-        public static T Resolve<T>()
-        {
-            return mContainer.Resolve<T>();
-        }
+        public static T Resolve<T>() => mContainer.Resolve<T>();
     }
 }

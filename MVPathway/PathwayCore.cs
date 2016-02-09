@@ -4,7 +4,7 @@ using System;
 
 namespace MVPathway
 {
-    public static class MVPCore
+    public static class PathwayCore
     {
         private static IPresenter mPresenter;
 

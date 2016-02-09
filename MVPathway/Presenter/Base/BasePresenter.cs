@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace MVPathway.Presenter.Base
 {
-    public abstract class BasePresenter : IPresenter
+    public abstract class BasePresenter
     {
         private const string cInvalidViewModelMessage = "TViewModel is not a valid ViewModel type.";
 
@@ -17,9 +17,9 @@ namespace MVPathway.Presenter.Base
                 (sender, viewModelType) => Close(viewModelType));
         }
 
-        public virtual BaseViewModel Show(Type viewModelType)
+        protected virtual BaseViewModel Show(Type viewModelType)
         {
-            var viewModel = MVPCore.Resolve(viewModelType);
+            var viewModel = PathwayCore.Resolve(viewModelType);
             if (!(viewModel is BaseViewModel))
             {
                 throw new Exception(cInvalidViewModelMessage);
@@ -29,9 +29,9 @@ namespace MVPathway.Presenter.Base
             return baseViewModel;
         }
 
-        public virtual void Close(Type viewModelType)
+        protected virtual void Close(Type viewModelType)
         {
-            var viewModel = MVPCore.Resolve(viewModelType);
+            var viewModel = PathwayCore.Resolve(viewModelType);
             if (!(viewModel is BaseViewModel))
             {
                 throw new Exception(cInvalidViewModelMessage);
