@@ -37,12 +37,14 @@
   <ItemGroup>
     <Compile Include="Helpers\Const.cs" />
     <Compile Include="MVVM\IoC.cs" />
+    <Compile Include="Services\NavigatorService.cs" />
     <Compile Include="PathwayCore.cs" />
     <Compile Include="MVVM\PageFactory.cs" />
     <Compile Include="Presenter\NavigationPagePresenter.cs" />
     <Compile Include="Presenter\Base\BasePresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MVVM\BaseViewModel.cs" />
+    <Compile Include="Services\Contracts\INavigatorService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
