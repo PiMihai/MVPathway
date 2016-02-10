@@ -20,6 +20,7 @@ namespace MVPathway
         static PathwayCore()
         {
             registerInternalServices();
+            mNavigatorService = Resolve<INavigatorService>();
         }
 
         #endregion
