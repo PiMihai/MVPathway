@@ -1,6 +1,7 @@
 ﻿using MVPathway.Helpers;
 using MVPathway.MVVM;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MVPathway.Presenter.Base
@@ -17,7 +18,7 @@ namespace MVPathway.Presenter.Base
                 (sender, viewModelType) => Close(viewModelType));
         }
 
-        protected virtual BaseViewModel Show(Type viewModelType)
+        protected virtual async Task<BaseViewModel> Show(Type viewModelType)
         {
             var viewModel = PathwayCore.Resolve(viewModelType);
             if (!(viewModel is BaseViewModel))
@@ -29,7 +30,7 @@ namespace MVPathway.Presenter.Base
             return baseViewModel;
         }
 
-        protected virtual void Close(Type viewModelType)
+        protected virtual async Task Close(Type viewModelType)
         {
             var viewModel = PathwayCore.Resolve(viewModelType);
             if (!(viewModel is BaseViewModel))

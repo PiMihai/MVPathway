@@ -2,6 +2,7 @@
 using MVPathway.Presenter.Base;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MVPathway.Presenter
@@ -18,24 +19,24 @@ namespace MVPathway.Presenter
             mNavigationPage = navigationPage;
         }
 
-        protected override BaseViewModel Show(Type viewModelType)
+        protected override async Task<BaseViewModel> Show(Type viewModelType)
         {
-            var viewModel = base.Show(viewModelType);
+            var viewModel = await base.Show(viewModelType);
             var page = PageFactory.GetPageForViewModel(viewModel);
-            mNavigationPage.PushAsync(page);
+            await mNavigationPage.PushAsync(page);
             mViewModelTypeStack.Push(viewModelType);
 
             return viewModel;
         }
 
-        protected override void Close(Type viewModelType)
+        protected override async Task Close(Type viewModelType)
         {
-            base.Close(viewModelType);
+            await base.Close(viewModelType);
             if(mViewModelTypeStack.Peek() != viewModelType)
             {
                 throw new Exception(cInvalidViewModelToCloseError);
             }
-            mNavigationPage.PopAsync();
+            await mNavigationPage.PopAsync();
             mViewModelTypeStack.Pop();
         }
     }

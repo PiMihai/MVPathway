@@ -1,14 +1,14 @@
 ﻿using MVPathway.MVVM;
-using MVPathway.Presenter;
+using MVPathway.Presenter.Base;
 using System;
 
 namespace MVPathway
 {
     public static class PathwayCore
     {
-        private static IPresenter mPresenter;
+        private static BasePresenter mPresenter;
 
-        public static void SetPresenter(IPresenter presenter)
+        public static void SetPresenter(BasePresenter presenter)
         {
             mPresenter = presenter;
         }
