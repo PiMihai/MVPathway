@@ -27,7 +27,11 @@ namespace MVPathway
 
         #region Public methods
 
-        public static void SetPresenter(BasePresenter presenter) => mPresenter = presenter;
+        public static void SetPresenter(BasePresenter presenter)
+        {
+            mPresenter = presenter;
+            mPresenter.Init();
+        }
 
         public static void ShowViewModel<TViewModel>() => mNavigatorService.Show<TViewModel>();
         public static void CloseViewModel<TViewModel>() => mNavigatorService.Close<TViewModel>();

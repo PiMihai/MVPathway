@@ -17,6 +17,7 @@ namespace MVPathway.Presenter
         public NavigationPagePresenter(NavigationPage navigationPage)
         {
             mNavigationPage = navigationPage;
+            Application.Current.MainPage = mNavigationPage;
         }
 
         protected override async Task<BaseViewModel> Show(Type viewModelType)

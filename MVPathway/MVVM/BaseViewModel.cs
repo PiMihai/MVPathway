@@ -1,11 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace MVPathway.MVVM
 {
-    public abstract class BaseViewModel : INotifyPropertyChanged
+    public abstract class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
         public virtual void OnAppearing() { }
         public virtual void OnDisappearing() { }
+        public virtual void Dispose() { }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

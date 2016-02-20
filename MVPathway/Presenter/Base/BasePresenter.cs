@@ -11,7 +11,7 @@ namespace MVPathway.Presenter.Base
     {
         private const string cInvalidViewModelMessage = "TViewModel is not a valid ViewModel type.";
 
-        public BasePresenter()
+        public virtual void Init()
         {
             MessagingCenter.Subscribe<INavigatorService, Type>(this, Const.CShowViewModel,
                 async (sender, viewModelType) => await Show(viewModelType));
