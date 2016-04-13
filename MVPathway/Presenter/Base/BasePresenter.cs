@@ -13,32 +13,33 @@ namespace MVPathway.Presenter.Base
 
         public virtual void Init()
         {
-            MessagingCenter.Subscribe<INavigatorService, Type>(this, Const.CShowViewModel,
-                async (sender, viewModelType) => await Show(viewModelType));
-            MessagingCenter.Subscribe<INavigatorService, Type>(this, Const.CCloseViewModel,
-                async (sender, viewModelType) => await Close(viewModelType));
+            MessagingCenter.Subscribe<INavigatorService, ViewModelNavigationMessage>(this, Const.CShowViewModel,
+                async (sender, message) => await Show(message));
+            MessagingCenter.Subscribe<INavigatorService, ViewModelNavigationMessage>(this, Const.CCloseViewModel,
+                async (sender, message) => await Close(message));
         }
 
-        protected virtual async Task<BaseViewModel> Show(Type viewModelType)
+        protected virtual async Task<BaseViewModel> Show(ViewModelNavigationMessage message)
         {
-            var viewModel = PathwayCore.Resolve(viewModelType);
+            var viewModel = PathwayCore.Resolve(message.ViewModelType);
             if (!(viewModel is BaseViewModel))
             {
                 throw new Exception(cInvalidViewModelMessage);
             }
             var baseViewModel = viewModel as BaseViewModel;
-            baseViewModel.OnAppearing();
+            baseViewModel.OnNavigatedTo(message.Parameter);
             return baseViewModel;
         }
 
-        protected virtual async Task Close(Type viewModelType)
+        protected virtual async Task Close(ViewModelNavigationMessage message)
         {
-            var viewModel = PathwayCore.Resolve(viewModelType);
+            var viewModel = PathwayCore.Resolve(message.ViewModelType);
             if (!(viewModel is BaseViewModel))
             {
                 throw new Exception(cInvalidViewModelMessage);
             }
-            (viewModel as BaseViewModel).OnDisappearing();
+            var baseViewModel = viewModel as BaseViewModel;
+            baseViewModel.OnNavigatingFrom(message.Parameter);
         }
     }
 }

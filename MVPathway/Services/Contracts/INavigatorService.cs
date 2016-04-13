@@ -2,7 +2,7 @@
 {
     interface INavigatorService
     {
-        void Show<TViewModel>();
-        void Close<TViewModel>();
+        void Show<TViewModel>(object parameter = null);
+        void Close<TViewModel>(object parameter = null);
     }
 }

@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\Const.cs" />
+    <Compile Include="Helpers\ViewModelNavigationMessage.cs" />
     <Compile Include="MVVM\IoC.cs" />
     <Compile Include="Services\NavigatorService.cs" />
     <Compile Include="PathwayCore.cs" />

@@ -33,8 +33,10 @@ namespace MVPathway
             mPresenter.Init();
         }
 
-        public static void ShowViewModel<TViewModel>() => mNavigatorService.Show<TViewModel>();
-        public static void CloseViewModel<TViewModel>() => mNavigatorService.Close<TViewModel>();
+        public static void ShowViewModel<TViewModel>(object parameter = null)
+            => mNavigatorService.Show<TViewModel>(parameter);
+        public static void CloseViewModel<TViewModel>(object parameter = null)
+            => mNavigatorService.Close<TViewModel>(parameter);
 
         public static void RegisterInterface<TInterface,TConcrete>(bool asSingleton = true)
             where TConcrete : class
