@@ -1,9 +1,6 @@
-﻿using MVPathway.Helpers;
-using MVPathway.MVVM;
-using MVPathway.Services.Contracts;
+﻿using MVPathway.MVVM;
 using System;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace MVPathway.Presenter.Base
 {
@@ -11,35 +8,29 @@ namespace MVPathway.Presenter.Base
     {
         private const string cInvalidViewModelMessage = "TViewModel is not a valid ViewModel type.";
 
-        public virtual void Init()
+        protected internal virtual async Task<BaseViewModel> Show<TViewModel>(object parameter)
         {
-            MessagingCenter.Subscribe<INavigatorService, ViewModelNavigationMessage>(this, Const.CShowViewModel,
-                async (sender, message) => await Show(message));
-            MessagingCenter.Subscribe<INavigatorService, ViewModelNavigationMessage>(this, Const.CCloseViewModel,
-                async (sender, message) => await Close(message));
-        }
-
-        protected virtual async Task<BaseViewModel> Show(ViewModelNavigationMessage message)
-        {
-            var viewModel = PathwayCore.Resolve(message.ViewModelType);
+            var viewModel = PathwayCore.Resolve<TViewModel>();
             if (!(viewModel is BaseViewModel))
             {
                 throw new Exception(cInvalidViewModelMessage);
             }
             var baseViewModel = viewModel as BaseViewModel;
-            baseViewModel.OnNavigatedTo(message.Parameter);
+            baseViewModel.OnNavigatedTo(parameter);
             return baseViewModel;
         }
 
-        protected virtual async Task Close(ViewModelNavigationMessage message)
+        protected internal virtual async Task Close<TViewModel>(object parameter)
         {
-            var viewModel = PathwayCore.Resolve(message.ViewModelType);
+            var viewModel = PathwayCore.Resolve<TViewModel>();
             if (!(viewModel is BaseViewModel))
             {
                 throw new Exception(cInvalidViewModelMessage);
             }
             var baseViewModel = viewModel as BaseViewModel;
-            baseViewModel.OnNavigatingFrom(message.Parameter);
+            baseViewModel.OnNavigatingFrom(parameter);
         }
+
+        protected internal abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText);
     }
 }

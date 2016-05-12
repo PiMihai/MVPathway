@@ -21,25 +21,30 @@ namespace MVPathway.Presenter
             Application.Current.MainPage = mNavigationPage;
         }
 
-        protected override async Task<BaseViewModel> Show(ViewModelNavigationMessage message)
+        protected internal override async Task<BaseViewModel> Show<TViewModel>(object parameter)
         {
-            var viewModel = await base.Show(message);
+            var viewModel = await base.Show<TViewModel>(parameter);
             var page = PageFactory.GetPageForViewModel(viewModel);
             await mNavigationPage.PushAsync(page);
-            mViewModelTypeStack.Push(message.ViewModelType);
+            mViewModelTypeStack.Push(typeof(TViewModel));
 
             return viewModel;
         }
 
-        protected override async Task Close(ViewModelNavigationMessage message)
+        protected internal override async Task Close<TViewModel>(object parameter)
         {
-            await base.Close(message);
-            if(mViewModelTypeStack.Peek() != message.ViewModelType)
+            await base.Close<TViewModel>(parameter);
+            if(mViewModelTypeStack.Peek() != typeof(TViewModel))
             {
                 throw new Exception(cInvalidViewModelToCloseError);
             }
             await mNavigationPage.PopAsync();
             mViewModelTypeStack.Pop();
+        }
+
+        protected internal override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
+        {
+            return await mNavigationPage.DisplayAlert(title, message, okText, cancelText);
         }
     }
 }

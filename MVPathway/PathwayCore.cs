@@ -1,7 +1,8 @@
-﻿using MVPathway.MVVM;
+﻿using MVPathway.Helpers;
+using MVPathway.MVVM;
 using MVPathway.Presenter.Base;
-using MVPathway.Services.Contracts;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MVPathway
@@ -9,19 +10,8 @@ namespace MVPathway
     public static class PathwayCore
     {
         #region Instance members
-
-        private static INavigatorService mNavigatorService;
+        
         private static BasePresenter mPresenter;
-
-        #endregion
-
-        #region Constructors
-
-        static PathwayCore()
-        {
-            registerInternalServices();
-            mNavigatorService = Resolve<INavigatorService>();
-        }
 
         #endregion
 
@@ -30,13 +20,22 @@ namespace MVPathway
         public static void SetPresenter(BasePresenter presenter)
         {
             mPresenter = presenter;
-            mPresenter.Init();
         }
 
-        public static void ShowViewModel<TViewModel>(object parameter = null)
-            => mNavigatorService.Show<TViewModel>(parameter);
-        public static void CloseViewModel<TViewModel>(object parameter = null)
-            => mNavigatorService.Close<TViewModel>(parameter);
+        public static async Task ShowViewModelAsync<TViewModel>(object parameter = null)
+        {
+            await mPresenter.Show<TViewModel>(parameter);
+        }
+
+        public static async Task CloseViewModel<TViewModel>(object parameter = null)
+        {
+            await mPresenter.Close<TViewModel>(parameter);
+        }
+
+        public static async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        {
+            return await mPresenter.DisplayAlertAsync(title, message, okText, cancelText);
+        }
 
         public static void RegisterInterface<TInterface,TConcrete>(bool asSingleton = true)
             where TConcrete : class
@@ -59,15 +58,6 @@ namespace MVPathway
 
         public static Page GetPageForViewModel(BaseViewModel viewModel)
             => PageFactory.GetPageForViewModel(viewModel);
-
-        #endregion
-
-        #region Private methdos
-
-        private static void registerInternalServices()
-        {
-            RegisterInterface<INavigatorService, NavigatorService>();
-        }
 
         #endregion
     }
