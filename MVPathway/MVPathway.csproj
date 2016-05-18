@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\Const.cs" />
+    <Compile Include="MVVM\BaseObservableObject.cs" />
     <Compile Include="MVVM\IoC.cs" />
     <Compile Include="PathwayCore.cs" />
     <Compile Include="MVVM\PageFactory.cs" />
