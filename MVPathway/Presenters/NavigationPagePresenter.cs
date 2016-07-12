@@ -1,12 +1,12 @@
 ﻿using MVPathway.Helpers;
 using MVPathway.MVVM;
-using MVPathway.Presenter.Base;
+using MVPathway.Presenters.Base;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace MVPathway.Presenter
+namespace MVPathway.Presenters
 {
     public class NavigationPagePresenter : BasePresenter
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MVPathway.Presenter.Base
+namespace MVPathway.Presenters.Base
 {
     public abstract class BasePresenter
     {

@@ -1,13 +1,12 @@
-﻿using MVPathway.Helpers;
-using MVPathway.MVVM;
-using MVPathway.Presenter.Base;
+﻿using MVPathway.MVVM;
+using MVPathway.Presenters.Base;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MVPathway
 {
-    public static class PathwayCore
+  public static class PathwayCore
     {
         #region Instance members
         
@@ -27,7 +26,7 @@ namespace MVPathway
             await mPresenter.Show<TViewModel>(parameter);
         }
 
-        public static async Task CloseViewModel<TViewModel>(object parameter = null)
+        public static async Task CloseViewModelAsync<TViewModel>(object parameter = null)
         {
             await mPresenter.Close<TViewModel>(parameter);
         }
