@@ -1,7 +1,9 @@
 ﻿namespace MVPathway.Presenters.Messages
 {
-  class MenuToggleMessage
+  public class MenuToggleMessage
   {
+    public const string CMenuToggleMessage = nameof(CMenuToggleMessage);
+
     bool Open { get; set; }
   }
 }

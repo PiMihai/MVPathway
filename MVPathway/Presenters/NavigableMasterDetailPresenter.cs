@@ -22,7 +22,7 @@ namespace MVPathway.Presenters
         : base()
     {
       MenuBehaviour = MasterBehavior.Popover;
-      MessagingCenter.Subscribe<IMenuViewModel, MenuToggleMessage>(this, Const.CMenuToggleMessage, onCloseDrawerMessage);
+      MessagingCenter.Subscribe<IMenuViewModel, MenuToggleMessage>(this, MenuToggleMessage.CMenuToggleMessage, onCloseDrawerMessage);
     }
 
     protected internal override async Task<BaseViewModel> Show<TViewModel>(object parameter)
