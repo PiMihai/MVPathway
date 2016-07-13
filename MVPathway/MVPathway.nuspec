@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/UizzUW/MVPathway</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added ViewObject support</releaseNotes>
+    <releaseNotes>Small M/D Presenter fix</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework</tags>
   </metadata>
