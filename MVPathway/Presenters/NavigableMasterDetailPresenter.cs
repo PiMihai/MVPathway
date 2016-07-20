@@ -1,8 +1,8 @@
-﻿using MVPathway.Helpers;
+﻿using MVPathway.Messages;
+using MVPathway.Messages.Messengers;
 using MVPathway.MVVM;
 using MVPathway.Presenters.Abstractions;
 using MVPathway.Presenters.Base;
-using MVPathway.Presenters.Messages;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -22,7 +22,9 @@ namespace MVPathway.Presenters
         : base()
     {
       MenuBehaviour = MasterBehavior.Popover;
-      MessagingCenter.Subscribe<IMenuViewModel, MenuToggleMessage>(this, MenuToggleMessage.CMenuToggleMessage, onCloseDrawerMessage);
+
+      var messenger = MessengerResolver.RegisterMessenger<MenuToggleMessenger, MenuToggleMessage>();
+      MessagingCenter.Subscribe<MenuToggleMessenger, MenuToggleMessage>(messenger, MenuToggleMessenger.CMessageKey, onCloseDrawerMessage);
     }
 
     protected internal override async Task<BaseViewModel> Show<TViewModel>(object parameter)
@@ -91,13 +93,13 @@ namespace MVPathway.Presenters
       return true;
     }
 
-    private void onCloseDrawerMessage(IMenuViewModel sender, MenuToggleMessage message)
+    private void onCloseDrawerMessage(MenuToggleMessenger sender, MenuToggleMessage message)
     {
       if (mMasterDetailPage == null)
       {
         return;
       }
-      mMasterDetailPage.IsPresented = false;
+      mMasterDetailPage.IsPresented = !mMasterDetailPage.IsPresented;
     }
   }
 }
