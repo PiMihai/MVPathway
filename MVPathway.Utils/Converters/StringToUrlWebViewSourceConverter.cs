@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace MVPathway.Converters
+namespace MVPathway.Utils.Converters
 {
   public class StringToUrlWebViewSourceConverter : IValueConverter
   {

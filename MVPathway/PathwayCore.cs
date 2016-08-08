@@ -38,7 +38,7 @@ namespace MVPathway
     }
 
     public static void RegisterInterface<TInterface, TConcrete>(bool asSingleton = true)
-        where TConcrete : class
+        where TConcrete : TInterface
         => IoC.Register<TInterface, TConcrete>(asSingleton);
 
     public static void RegisterType<T>(bool asSingleton = true)
@@ -57,12 +57,12 @@ namespace MVPathway
       where TMessage : IMessage
       where TMessenger : class, IMessenger<TMessage>
       => MessengerResolver.RegisterMessenger<TMessenger, TMessage>();
-
-    public static T Resolve<T>() => IoC.Resolve<T>();
-    public static object Resolve(Type type) => IoC.Resolve(type);
     public static IMessenger<TMessage> ResolveMessenger<TMessage>()
       where TMessage : IMessage
       => MessengerResolver.ResolveMessenger<TMessage>();
+
+    public static T Resolve<T>() => IoC.Resolve<T>();
+    public static object Resolve(Type type) => IoC.Resolve(type);
     
     public static Page GetPageForViewModel(BaseViewModel viewModel)
         => PageFactory.GetPageForViewModel(viewModel);

@@ -1,6 +1,6 @@
 ﻿using MVPathway.Messages.Abstractions;
 
-namespace MVPathway.Messages
+namespace MVPathway.Utils.Messages
 {
   public class MenuToggleMessage : IMessage
   {

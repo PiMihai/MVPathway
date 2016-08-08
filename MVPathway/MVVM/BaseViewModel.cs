@@ -2,7 +2,7 @@
 {
     public abstract class BaseViewModel : BaseObservableObject
     {
-        public virtual void OnNavigatedTo(object parameter) { }
-        public virtual void OnNavigatingFrom(object parameter) { }
+        protected internal virtual void OnNavigatedTo(object parameter) { }
+        protected internal virtual void OnNavigatingFrom(object parameter) { }
     }
 }

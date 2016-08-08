@@ -1,13 +1,12 @@
-﻿using MVPathway.Messages;
-using MVPathway.Messages.Messengers;
-using MVPathway.MVVM;
-using MVPathway.Presenters.Abstractions;
+﻿using MVPathway.MVVM;
 using MVPathway.Presenters.Base;
+using MVPathway.Utils.Messages;
+using MVPathway.Utils.Presenters.Abstractions;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace MVPathway.Presenters
+namespace MVPathway.Utils.Presenters
 {
   public class NavigableMasterDetailPresenter : BasePresenter
   {
@@ -23,11 +22,11 @@ namespace MVPathway.Presenters
     {
       MenuBehaviour = MasterBehavior.Popover;
 
-      var messenger = MessengerResolver.RegisterMessenger<MenuToggleMessenger, MenuToggleMessage>();
+      var messenger = PathwayCore.RegisterMessenger<MenuToggleMessenger, MenuToggleMessage>();
       MessagingCenter.Subscribe<MenuToggleMessenger, MenuToggleMessage>(messenger, MenuToggleMessenger.CMessageKey, onCloseDrawerMessage);
     }
 
-    protected internal override async Task<BaseViewModel> Show<TViewModel>(object parameter)
+    protected override async Task<BaseViewModel> Show<TViewModel>(object parameter)
     {
       var viewModel = await base.Show<TViewModel>(parameter);
       var page = PathwayCore.GetPageForViewModel(viewModel);
@@ -73,7 +72,7 @@ namespace MVPathway.Presenters
       return viewModel;
     }
 
-    protected internal override async Task Close<TViewModel>(object parameter)
+    protected override async Task Close<TViewModel>(object parameter)
     {
       await base.Close<TViewModel>(parameter);
       var viewModel = PathwayCore.Resolve<TViewModel>();
@@ -83,7 +82,7 @@ namespace MVPathway.Presenters
       }
     }
 
-    protected internal override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
+    protected override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
     {
       if (cancelText != null)
       {

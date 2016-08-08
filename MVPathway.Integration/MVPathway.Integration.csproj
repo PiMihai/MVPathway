@@ -52,6 +52,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MVPathway.Utils\MVPathway.Utils.csproj">
+      <Project>{94ca7246-1361-4d10-b8e3-458b3ea5a4dd}</Project>
+      <Name>MVPathway.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MVPathway\MVPathway.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
       <Name>MVPathway</Name>

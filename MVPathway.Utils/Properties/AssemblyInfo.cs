@@ -4,12 +4,12 @@ using System.Reflection;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MVPathway")]
-[assembly: AssemblyDescription("Lightweight MVVMP Framework for Xamarin.Forms")]
+[assembly: AssemblyTitle("MVPathway.Utils")]
+[assembly: AssemblyDescription("Utility package for MVPathway")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mihai Pirvu")]
-[assembly: AssemblyProduct("MVPathway")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyProduct("MVPathway.Utils")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]

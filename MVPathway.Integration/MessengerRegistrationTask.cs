@@ -1,5 +1,5 @@
-﻿using MVPathway.Messages;
-using MVPathway.Presenters;
+﻿using MVPathway.Utils.Messages;
+using MVPathway.Utils.Presenters;
 
 namespace MVPathway.Integration
 {
