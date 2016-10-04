@@ -1,7 +1,6 @@
-﻿using MVPathway.MVVM;
-using MVPathway.Presenters.Base;
+﻿using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
-using MVPathway.Utils.Presenters.Abstractions;
+using MVPathway.Utils.ViewModels.Qualities;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -14,28 +13,24 @@ namespace MVPathway.Utils.Presenters
     private const string cMainChildNotRegisteredMessage = "IMainChildViewModel not registered. Please register your main child view model as an interface before trying to show the menu.";
 
     private MasterDetailPage mMasterDetailPage;
-    
+
     public MasterBehavior MenuBehaviour { get; set; }
 
-    public NavigableMasterDetailPresenter()
-        : base()
+    public NavigableMasterDetailPresenter(IPathwayCore pathwayCore)
+        : base(pathwayCore)
     {
       MenuBehaviour = MasterBehavior.Popover;
-
-      var messenger = PathwayCore.RegisterMessenger<MenuToggleMessenger, MenuToggleMessage>();
-      MessagingCenter.Subscribe<MenuToggleMessenger, MenuToggleMessage>(messenger, MenuToggleMessenger.CMessageKey, onCloseDrawerMessage);
+      PathwayCore.SubscribeToMessage<MenuToggleMessage>(onCloseDrawerMessage);
     }
 
-    protected override async Task<BaseViewModel> Show<TViewModel>(object parameter)
+    protected override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
     {
-      var viewModel = await base.Show<TViewModel>(parameter);
-      var page = PathwayCore.GetPageForViewModel(viewModel);
-
-      if (viewModel is IMenuViewModel)
+      var page = PathwayCore.ResolvePageForViewModel<TViewModel>();
+      if (viewModel.Definition.HasQuality<MenuQuality>())
       {
         if (mMasterDetailPage == null)
         {
-          if(string.IsNullOrEmpty(page.Title))
+          if (string.IsNullOrEmpty(page.Title))
           {
             page.Title = "Menu";
           }
@@ -47,7 +42,7 @@ namespace MVPathway.Utils.Presenters
         }
         try
         {
-          await PathwayCore.ShowViewModelAsync<IMainChildViewModel>();
+          await PathwayCore.ShowViewModelAsync(x => x.HasQuality<MainChildQuality>());
         }
         catch
         {
@@ -55,11 +50,11 @@ namespace MVPathway.Utils.Presenters
         }
         Application.Current.MainPage = mMasterDetailPage;
       }
-      else if (viewModel is IChildViewModel)
+      else if (viewModel.Definition.HasQuality<ChildQuality>())
       {
         mMasterDetailPage.Detail = new NavigationPage(page);
       }
-      else if (viewModel is IFullViewModel)
+      else if (viewModel.Definition.HasQuality<FullscreenQuality>())
       {
         NavigationPage.SetHasNavigationBar(page, true);
         Application.Current.MainPage = new NavigationPage(page);
@@ -68,20 +63,18 @@ namespace MVPathway.Utils.Presenters
       {
         throw new Exception(cViewModelNotTaggedMessage);
       }
-
       return viewModel;
     }
 
-    protected override async Task Close<TViewModel>(object parameter)
+    protected override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
     {
-      await base.Close<TViewModel>(parameter);
-      var viewModel = PathwayCore.Resolve<TViewModel>();
-      if (viewModel is IFullViewModel)
+      if (viewModel.Definition.HasQuality<ChildQuality>())
       {
-        await PathwayCore.ShowViewModelAsync<IMenuViewModel>();
+        await PathwayCore.ShowViewModelAsync(x => x.HasQuality<MainChildQuality>());
       }
+      return viewModel;
     }
-
+    
     protected override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
     {
       if (cancelText != null)
@@ -92,7 +85,7 @@ namespace MVPathway.Utils.Presenters
       return true;
     }
 
-    private void onCloseDrawerMessage(MenuToggleMessenger sender, MenuToggleMessage message)
+    private void onCloseDrawerMessage(MenuToggleMessage message)
     {
       if (mMasterDetailPage == null)
       {

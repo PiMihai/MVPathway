@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/UizzUW/MVPathway</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Switch from Autofac to DryIoc, branch MVPathway.Utils</releaseNotes>
+    <releaseNotes>The new MVPathway is here!</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework</tags>
   </metadata>

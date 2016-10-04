@@ -1,4 +1,4 @@
-﻿namespace MVPathway.Integration
+﻿namespace MVPathway.Integration.Tasks
 {
   interface IIntegrationTask
   {
