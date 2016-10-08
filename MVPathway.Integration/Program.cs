@@ -2,18 +2,21 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace MVPathway.Integration
 {
+
   static class Program
   {
     static void Main(string[] args)
     {
       var integrationTasks = typeof(IIntegrationTask)
+          .GetTypeInfo()
           .Assembly
           .DefinedTypes
-          .Where(x => x.IsClass && typeof(IIntegrationTask).IsAssignableFrom(x))
-          .Select(x => Activator.CreateInstance(x) as IIntegrationTask);
+          .Where(x => x.IsClass && !x.IsAbstract && typeof(IIntegrationTask).IsAssignableFrom(x.UnderlyingSystemType))
+          .Select(x => Activator.CreateInstance(x.UnderlyingSystemType) as IIntegrationTask);
 
       long elapsedTotal = 0;
 

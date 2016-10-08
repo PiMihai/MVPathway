@@ -1,6 +1,6 @@
 ﻿namespace MVPathway.Integration.Tasks
 {
-  class BaseIntegrationTask : IIntegrationTask
+  abstract class BaseIntegrationTask : IIntegrationTask
   {
     protected IPathwayCore PathwayCore { get; private set; }
 

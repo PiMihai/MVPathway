@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0"
+    },
+    "Xamarin.Forms": "2.3.2.127"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dnxcore50",
+        "portable-monoandroid10+monotouch10+net45+win+win81+wp8+wpa81+xamarinios10"
+      ],
+      "dependencies": {
+        "MVPathway.Utils": {
+          "target": "project"
+        }
+      }
+    }
+  }
+}

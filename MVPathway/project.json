@@ -1,0 +1,14 @@
+{
+  "supports": {},
+  "dependencies": {
+    "DryIoc.dll": "2.7.1",
+    "NETStandard.Library": "1.6.0",
+    "Xamarin.Forms": "2.3.2.127",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
+  },
+  "frameworks": {
+    "netstandard1.3": {
+      "imports": "portable-monoandroid10+monotouch10+net45+win+win81+wp8+wpa81+xamarinios10"
+    }
+  }
+}
