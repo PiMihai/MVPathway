@@ -2,9 +2,12 @@
 
 namespace MVPathway.MVVM.Abstractions
 {
-  interface IDiContainer
+  public interface IDiContainer
   {
+    bool IsRegistered<T>();
     void Register<T>(bool asSingleton = true) where T : class;
+    void Register<T>(T singletonInstance) where T : class;
+    void Register(Type type, bool asSingleton = true);
     void Register<TInterface, TConcrete>(bool asSingleton = true) where TConcrete : TInterface;
     object Resolve(Type type);
     T Resolve<T>();

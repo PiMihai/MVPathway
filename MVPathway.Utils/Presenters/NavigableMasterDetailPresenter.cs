@@ -1,4 +1,6 @@
-﻿using MVPathway.Presenters;
+﻿using MVPathway.Messages.Abstractions;
+using MVPathway.MVVM.Abstractions;
+using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
 using MVPathway.Utils.ViewModels.Qualities;
 using System;
@@ -12,20 +14,30 @@ namespace MVPathway.Utils.Presenters
     private const string cViewModelNotTaggedMessage = "Unknown ViewModel type. If you are using the NavigableMasterDetailPresenters, you must tag all your MVPathway ViewModels with either IMenuViewModel, IMainChildViewModel, IChildViewModel or IFullViewModel.";
     private const string cMainChildNotRegisteredMessage = "IMainChildViewModel not registered. Please register your main child view model as an interface before trying to show the menu.";
 
+    private readonly IMessagingManager mMessagingManager;
+
     private MasterDetailPage mMasterDetailPage;
+
+    public bool IsDrawerOpen => mMasterDetailPage?.IsPresented ?? false;
 
     public MasterBehavior MenuBehaviour { get; set; }
 
-    public NavigableMasterDetailPresenter(IPathwayCore pathwayCore)
-        : base(pathwayCore)
+    public NavigableMasterDetailPresenter(IViewModelManager viewModelManager,
+                                          IMessagingManager messagingManager,
+                                          IDiContainer container)
+        : base(container, viewModelManager)
     {
+      mMessagingManager = messagingManager;
+
       MenuBehaviour = MasterBehavior.Popover;
-      PathwayCore.SubscribeToMessage<MenuToggleMessage>(onCloseDrawerMessage);
+      mMessagingManager.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);
     }
 
-    protected override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+    public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
     {
-      var page = PathwayCore.ResolvePageForViewModel<TViewModel>();
+      await base.Show(viewModel, parameter);
+
+      var page = ViewModelManager.ResolvePageForViewModel(viewModel);
       if (viewModel.Definition.HasQuality<MenuQuality>())
       {
         if (mMasterDetailPage == null)
@@ -42,7 +54,8 @@ namespace MVPathway.Utils.Presenters
         }
         try
         {
-          await PathwayCore.ShowViewModelAsync(x => x.HasQuality<MainChildQuality>());
+          var mainChildVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MainChildQuality>());
+          await Show(mainChildVm, null);
         }
         catch
         {
@@ -52,6 +65,11 @@ namespace MVPathway.Utils.Presenters
       }
       else if (viewModel.Definition.HasQuality<ChildQuality>())
       {
+        if (mMasterDetailPage == null)
+        {
+          var menuVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MenuQuality>());
+          await Show(menuVm, null);
+        }
         mMasterDetailPage.Detail = new NavigationPage(page);
       }
       else if (viewModel.Definition.HasQuality<FullscreenQuality>())
@@ -66,22 +84,30 @@ namespace MVPathway.Utils.Presenters
       return viewModel;
     }
 
-    protected override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
+    public override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
     {
+      await base.Close(viewModel, parameter);
+
       if (viewModel.Definition.HasQuality<ChildQuality>())
       {
-        await PathwayCore.ShowViewModelAsync(x => x.HasQuality<MainChildQuality>());
+        var mainChildVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MainChildQuality>());
+        await Show(mainChildVm, null);
+      }
+      else if (viewModel.Definition.HasQuality<FullscreenQuality>())
+      {
+        var menuVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MenuQuality>());
+        await Show(menuVm, null);
       }
       return viewModel;
     }
-    
-    protected override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
+
+    public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
     {
       if (cancelText != null)
       {
-        return await Application.Current.MainPage.DisplayAlert(title, message, okText, cancelText);
+        return await Application.Current.MainPage?.DisplayAlert(title, message, okText, cancelText);
       }
-      await Application.Current.MainPage.DisplayAlert(title, message, okText);
+      await Application.Current.MainPage?.DisplayAlert(title, message, okText);
       return true;
     }
 

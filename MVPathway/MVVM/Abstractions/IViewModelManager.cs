@@ -1,16 +1,15 @@
 ﻿using System;
-using MVPathway.MVVM.Abstractions;
 using Xamarin.Forms;
 
 namespace MVPathway.MVVM.Abstractions
 {
-  interface IViewModelManager
+  public interface IViewModelManager
   {
-    void RegisterPageForViewModel<TViewModel, TPage>(ViewModelDefinition definition)
+    void RegisterPageForViewModel<TViewModel, TPage>(ViewModelDefinition definition = null)
       where TViewModel : BaseViewModel
       where TPage : class;
     Page ResolvePageForViewModel(Func<ViewModelDefinition, bool> definitionFilter);
-    Page ResolvePageForViewModel<TViewModel>() where TViewModel : BaseViewModel;
+    Page ResolvePageForViewModel<TViewModel>(TViewModel viewModel) where TViewModel : BaseViewModel;
     BaseViewModel ResolveViewModel(Func<ViewModelDefinition, bool> definitionFilter);
   }
 }

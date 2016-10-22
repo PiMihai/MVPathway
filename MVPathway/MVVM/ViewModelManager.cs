@@ -19,7 +19,7 @@ namespace MVPathway.MVVM
       mLogger = logger;
     }
 
-    public void RegisterPageForViewModel<TViewModel, TPage>(ViewModelDefinition definition)
+    public void RegisterPageForViewModel<TViewModel, TPage>(ViewModelDefinition definition = null)
         where TViewModel : BaseViewModel
         where TPage : class
     {
@@ -44,9 +44,9 @@ namespace MVPathway.MVVM
       return mMap.Keys.FirstOrDefault(x => definitionFilter(x.Definition));
     }
 
-    public Page ResolvePageForViewModel<TViewModel>()
+    public Page ResolvePageForViewModel<TViewModel>(TViewModel viewModel)
       where TViewModel : BaseViewModel
-    => getPageForViewModel(mContainer.Resolve<TViewModel>());
+    => getPageForViewModel(viewModel);
 
     public Page ResolvePageForViewModel(Func<ViewModelDefinition, bool> definitionFilter)
       => getPageForViewModel(ResolveViewModel(definitionFilter));
@@ -56,6 +56,7 @@ namespace MVPathway.MVVM
       if (!mMap.ContainsKey(viewModel))
       {
         mLogger.LogError($"No page registered for {viewModel.GetType().Name}");
+        return null;
       }
       return mMap[viewModel];
     }

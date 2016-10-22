@@ -36,7 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IPathwayCore.cs" />
+    <Compile Include="Builder\PathwayCoreOptions.cs" />
+    <Compile Include="Builder\Abstractions\IPathwayCoreOptions.cs" />
     <Compile Include="Logging\Abstractions\ILogger.cs" />
     <Compile Include="Logging\PathwayLogger.cs" />
     <Compile Include="Messages\Abstractions\IMessage.cs" />
@@ -48,10 +49,11 @@
     <Compile Include="MVVM\BaseObservableObject.cs" />
     <Compile Include="MVVM\DiContainer.cs" />
     <Compile Include="Messages\MessagingManager.cs" />
-    <Compile Include="PathwayCore.cs" />
     <Compile Include="MVVM\ViewModelManager.cs" />
-    <Compile Include="PathwayCoreFactory.cs" />
+    <Compile Include="Builder\PathwayCore.cs" />
     <Compile Include="Presenters\BasePresenter.cs" />
+    <Compile Include="Presenters\Abstractions\IPresenter.cs" />
+    <Compile Include="Presenters\SinglePagePresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MVVM\BaseViewModel.cs" />
   </ItemGroup>

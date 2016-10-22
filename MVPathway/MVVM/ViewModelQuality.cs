@@ -1,4 +1,6 @@
-﻿namespace MVPathway.MVVM
+﻿using System.Reflection;
+
+namespace MVPathway.MVVM
 {
   public abstract class ViewModelQuality
   {
@@ -8,7 +10,8 @@
       {
         return false;
       }
-      return GetType().FullName == obj.GetType().FullName;
+      return GetType().FullName == obj.GetType().FullName ||
+             GetType().GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo());
     }
 
     public override int GetHashCode()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace MVPathway.MVVM.Abstractions
 {
@@ -11,7 +12,8 @@ namespace MVPathway.MVVM.Abstractions
     public bool HasQuality<TQuality>()
       where TQuality : ViewModelQuality
     {
-      return mQualities.Any(x => x.FullName == typeof(TQuality).FullName);
+      return mQualities.Any(x => x.FullName == typeof(TQuality).FullName ||
+                                 typeof(TQuality).GetTypeInfo().IsAssignableFrom(x.GetTypeInfo()));
     }
 
     public void AddQuality<TQuality>()

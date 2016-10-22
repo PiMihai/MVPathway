@@ -19,7 +19,13 @@ namespace MVPathway.Utils.Converters
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      throw new NotImplementedException();
+      var stringValue = value as string;
+      var options = (parameter as string)?.Split(',');
+      if (options == null || string.IsNullOrEmpty(options[0]) || string.IsNullOrEmpty(options[1]))
+      {
+        return "INVALID_CONVERTER_PARAM";
+      }
+      return stringValue == options[0];
     }
   }
 }

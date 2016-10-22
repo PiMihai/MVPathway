@@ -1,47 +1,72 @@
 ﻿using MVPathway.MVVM;
+using MVPathway.MVVM.Abstractions;
+using MVPathway.Presenters.Abstractions;
 using System.Threading.Tasks;
+using System;
 
 namespace MVPathway.Presenters
 {
-  public abstract class BasePresenter
+  public abstract class BasePresenter : IPresenter
   {
     private const string cInvalidViewModelMessage = "TViewModel is not a valid ViewModel type.";
 
-    protected IPathwayCore PathwayCore { get; private set; }
+    protected IDiContainer Container { get; private set; }
+    protected IViewModelManager ViewModelManager { get; private set; }
 
-    public BasePresenter(IPathwayCore pathwayCore)
+    public BasePresenter(IDiContainer container, IViewModelManager viewModelManager)
     {
-      PathwayCore = pathwayCore;
+      Container = container;
+      ViewModelManager = viewModelManager;
     }
 
-    internal async Task<TViewModel> Show<TViewModel>(object parameter)
+    public async Task<TViewModel> Show<TViewModel>(object parameter = null)
       where TViewModel : BaseViewModel
     {
-      var viewModel = PathwayCore.Resolve<TViewModel>();
+      var viewModel = Container.Resolve<TViewModel>();
       return await Show(viewModel, parameter);
     }
 
-    internal async Task<TViewModel> Close<TViewModel>(object parameter)
-      where TViewModel : BaseViewModel
+    public async Task<BaseViewModel> Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
     {
-      var viewModel = PathwayCore.Resolve<TViewModel>();
-      return await Close(viewModel, parameter);
+      var viewModel = ViewModelManager.ResolveViewModel(definitionFilter);
+      if (ViewModelManager == null)
+      {
+        return null;
+      }
+      return await Show(viewModel, parameter);
     }
 
-    protected internal virtual async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+    public virtual async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter = null)
       where TViewModel : BaseViewModel
     {
       viewModel.OnNavigatedTo(parameter);
       return viewModel;
     }
 
-    protected internal virtual async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
+    public async Task<TViewModel> Close<TViewModel>(object parameter = null)
+      where TViewModel : BaseViewModel
+    {
+      var viewModel = Container.Resolve<TViewModel>();
+      return await Close(viewModel, parameter);
+    }
+
+    public async Task<BaseViewModel> Close(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
+    {
+      var viewModel = ViewModelManager.ResolveViewModel(definitionFilter);
+      if (ViewModelManager == null)
+      {
+        return null;
+      }
+      return await Close(viewModel, parameter);
+    }
+
+    public virtual async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter = null)
       where TViewModel : BaseViewModel
     {
       viewModel.OnNavigatingFrom(parameter);
       return viewModel;
     }
 
-    protected internal abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText);
+    public abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText);
   }
 }

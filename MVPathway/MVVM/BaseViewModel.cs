@@ -6,8 +6,8 @@ namespace MVPathway.MVVM
   {
     public ViewModelDefinition Definition { get; internal set; }
 
-    protected internal virtual void OnNavigatedTo(object parameter)
-    { }
+    protected internal virtual void OnNavigatedTo(object parameter) { }
+
     protected internal virtual void OnNavigatingFrom(object parameter) { }
   }
 }

@@ -1,38 +1,49 @@
-﻿using System;
+﻿using MVPathway.Logging.Abstractions;
+using MVPathway.MVVM.Abstractions;
+using MVPathway.Presenters;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace MVPathway.Presenters
+namespace MVPathway.Utils.Presenters
 {
   public class NavigationPagePresenter : BasePresenter
   {
     private const string cInvalidViewModelToCloseError = "TViewModel to close is not the same type as the one on top of the stack.";
 
+    private readonly ILogger mLogger;
     private readonly NavigationPage mNavigationPage;
     private Stack<Type> mViewModelTypeStack = new Stack<Type>();
 
-    public NavigationPagePresenter(IPathwayCore pathwayCore, NavigationPage navigationPage)
-      : base(pathwayCore)
+    public NavigationPagePresenter(IViewModelManager viewModelManager,
+                                   IDiContainer container,
+                                   ILogger logger)
+      : base(container, viewModelManager)
     {
-      mNavigationPage = navigationPage;
-      Application.Current.MainPage = mNavigationPage;
+      mLogger = logger;
+      Application.Current.MainPage = mNavigationPage = new NavigationPage();
     }
 
-    protected override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+    public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
     {
-      var page = PathwayCore.ResolvePageForViewModel<TViewModel>();
+      await base.Show(viewModel, parameter);
+
+      var page = ViewModelManager.ResolvePageForViewModel(viewModel);
       await mNavigationPage.PushAsync(page);
       mViewModelTypeStack.Push(typeof(TViewModel));
 
       return viewModel;
     }
 
-    protected override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
+    public override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
     {
+      await base.Close(viewModel, parameter);
+
       if (mViewModelTypeStack.Peek() != typeof(TViewModel))
       {
-        throw new Exception(cInvalidViewModelToCloseError);
+        mLogger.LogWarning(cInvalidViewModelToCloseError);
+        return null;
       }
       await mNavigationPage.PopAsync();
       mViewModelTypeStack.Pop();
@@ -40,7 +51,7 @@ namespace MVPathway.Presenters
       return viewModel;
     }
 
-    protected override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
+    public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
     {
       return await mNavigationPage.DisplayAlert(title, message, okText, cancelText);
     }

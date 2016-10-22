@@ -1,10 +1,10 @@
-{
+﻿{
   "supports": {},
   "dependencies": {
-    "DryIoc.dll": "2.7.1",
+    "DryIoc.dll": "2.8.3",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.0",
-    "Xamarin.Forms": "2.3.2.127",
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
+    "Xamarin.Forms": "2.3.2.127"
   },
   "frameworks": {
     "netstandard1.3": {
