@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using MVPathway.Builder;
 
 namespace MVPathway.Integration.Droid
 {

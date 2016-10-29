@@ -1,5 +1,6 @@
 ﻿
 using Foundation;
+using MVPathway.Builder;
 using UIKit;
 
 namespace MVPathway.Integration.iOS

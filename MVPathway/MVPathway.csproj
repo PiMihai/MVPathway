@@ -58,12 +58,13 @@
     <Compile Include="MVVM\BaseViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MVPathway.nuspec" />
     <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties project_1json__JSONSchema="http://json.schemastore.org/project" />
+      <UserProperties project_1json__JSONSchema="http://json.schemastore.org/nuget-project" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

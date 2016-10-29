@@ -8,10 +8,11 @@ using Xamarin.Forms;
 
 namespace MVPathway.Integration.Pages
 {
-  public partial class SecondPage : ContentPage
+  public partial class FirstPage : ContentPage
   {
-    public SecondPage()
+    public FirstPage()
     {
+      InitializeComponent();
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using MVPathway.Integration.Tasks.Base;
+﻿using MVPathway.Builder;
+using MVPathway.Integration.Tasks.Base;
 using MVPathway.MVVM.Abstractions;
 using System;
 using System.Diagnostics;

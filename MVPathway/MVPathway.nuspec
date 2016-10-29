@@ -10,8 +10,16 @@
     <projectUrl>https://github.com/UizzUW/MVPathway</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>The new MVPathway is here!</releaseNotes>
+    <releaseNotes>.NET Standard 1.4 retarget</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework</tags>
+    <dependencies>
+      <group targetFramework="monoandroid10">
+        <dependency id="DryIoc.dll" version="2.8.4" />
+      </group>
+    </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\MVPathway.dll" target="lib\netstandard1.4\MVPathway.dll" />
+  </files>
 </package>
