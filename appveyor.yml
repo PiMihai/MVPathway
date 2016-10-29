@@ -7,14 +7,12 @@ branches:
   - dev
 nuget:  
   disable_publish_on_pr: true
-after_build:  
+build_script:  
 - ps: .\Build.ps1
 test: off  
 artifacts:  
-- path: .\MVPathway\*.nupkg
-  name: MVPathway
-- path: .\MVPathway.Utils\*.nupkg
-  name: MVPathway.Utils
+- path: .\artifacts\**\*.nupkg
+  name: NuGet
 deploy:  
 - name: uizz-experimental
   provider: NuGet

@@ -8,5 +8,6 @@
     "netstandard1.4": {
       "imports": "portable-monoandroid10+monotouch10+net45+win+win81+wp8+wpa81+xamarinios10"
     }
-  }
+  },
+  "supports": {}
 }

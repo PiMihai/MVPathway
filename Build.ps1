@@ -52,5 +52,10 @@ if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
 
+exec { & dotnet restore }
+exec { & "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" ".\MVPathway\MVPathway.csproj" /p:Configuration=Release }
+exec { & "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" ".\MVPathway.Utils\MVPathway.Utils.csproj" /p:Configuration=Release }
 exec { & nuget pack .\MVPathway\MVPathway.csproj -Properties Configuration=Release }
 exec { & nuget pack .\MVPathway.Utils\MVPathway.Utils.csproj -Properties Configuration=Release }
+exec { & mkdir artifacts }
+exec { & move *.nupkg artifacts }
