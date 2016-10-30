@@ -8,6 +8,7 @@
     <owners>$author$</owners>
     <licenseUrl>https://github.com/UizzUW/MVPathway/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/UizzUW/MVPathway</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>.NET Standard 1.4 retarget</releaseNotes>
