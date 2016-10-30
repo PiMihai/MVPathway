@@ -7,9 +7,8 @@ namespace MVPathway.Integration.Tasks.Utils
 {
   public class NavigationPagePresenterDelegationTask : BaseUtilsPresenterDelegationTask
   {
-    public NavigationPagePresenterDelegationTask(IDiContainer container, IPresenter presenter, IViewModelManager viewModelManager) : base(container, presenter, viewModelManager)
-    {
-    }
+    public NavigationPagePresenterDelegationTask(IDiContainer container, IViewModelManager viewModelManager)
+      : base(container, viewModelManager) { }
 
     public override bool Execute()
     {
@@ -20,9 +19,8 @@ namespace MVPathway.Integration.Tasks.Utils
 
   public class NavigableMasterDetailPresenterDelegationTask : BaseUtilsPresenterDelegationTask
   {
-    public NavigableMasterDetailPresenterDelegationTask(IDiContainer container, IPresenter presenter, IViewModelManager viewModelManager) : base(container, presenter, viewModelManager)
-    {
-    }
+    public NavigableMasterDetailPresenterDelegationTask(IDiContainer container, IViewModelManager viewModelManager)
+      : base(container, viewModelManager) { }
 
     public override bool Execute()
     {
@@ -36,9 +34,8 @@ namespace MVPathway.Integration.Tasks.Utils
     protected IDiContainer Container { get; private set; }
 
     public BaseUtilsPresenterDelegationTask(IDiContainer container,
-                                            IPresenter presenter,
                                             IViewModelManager viewModelManager)
-      : base(presenter, viewModelManager)
+      : base(container, viewModelManager)
     {
       Container = container;
     }

@@ -67,6 +67,6 @@ namespace MVPathway.Presenters
       return viewModel;
     }
 
-    public abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText);
+    public abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null);
   }
 }

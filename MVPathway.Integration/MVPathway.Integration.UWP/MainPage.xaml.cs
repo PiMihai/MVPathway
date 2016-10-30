@@ -7,7 +7,7 @@ namespace MVPathway.Integration.UWP
     public MainPage()
     {
       this.InitializeComponent();
-      LoadApplication(PathwayCore.Create<MVPathway.Integration.App>());
+      LoadApplication(PathwayFactory.Create<MVPathway.Integration.App>());
     }
   }
 }

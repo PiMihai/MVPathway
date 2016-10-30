@@ -51,7 +51,7 @@ namespace MVPathway.Utils.Presenters
       return viewModel;
     }
 
-    public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
+    public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
     {
       return await mNavigationPage.DisplayAlert(title, message, okText, cancelText);
     }

@@ -5,29 +5,33 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using MVPathway.Logging.Abstractions;
+using MVPathway.Messages.Abstractions;
+using MVPathway.Presenters.Abstractions;
 using Xamarin.Forms;
 
 namespace MVPathway.Integration
 {
-  public partial class App : Application
+  public partial class App : PathwayApplication
   {
-    private readonly IDiContainer mContainer;
-    private bool isSandbox = false;
+    private IDiContainer mContainer;
+    private ILogger mLogger;
 
-    public App(IDiContainer container)
+    public override void Init(IDiContainer container,
+                               IViewModelManager vmManager,
+                               IMessagingManager messagingManager,
+                               IPresenter presenter,
+                               ILogger logger)
     {
-      InitializeComponent();
-      MainPage = new ContentPage();
-
       mContainer = container;
+      mLogger = logger;
+
+      MainPage = new ContentPage();
     }
 
     protected override void OnStart()
     {
-      if(isSandbox)
-      {
-        return;
-      }
+      base.OnStart();
 
       var integrationTaskTypes = typeof(IIntegrationTask)
                 .GetTypeInfo()
@@ -40,8 +44,7 @@ namespace MVPathway.Integration
 
       foreach (var taskType in integrationTaskTypes)
       {
-        var app = PathwayCore.Create<App>();
-        app.isSandbox = true;
+        var app = PathwayFactory.Create<App>();
         app.mContainer.Register(taskType, true);
 
         var task = app.mContainer.Resolve(taskType) as IIntegrationTask;
@@ -54,38 +57,28 @@ namespace MVPathway.Integration
         }
         catch (Exception e)
         {
-          Debug.WriteLine($"Task {task.GetType().Name} has thrown {e}.");
-          Debug.WriteLine(e.StackTrace);
+          mLogger.LogInfo($"Task {task.GetType().Name} has thrown {e}.");
+          mLogger.LogInfo(e.StackTrace);
         }
         if (result)
         {
-          Debug.WriteLine($"Task {task.GetType().Name} has passed.");
+          mLogger.LogInfo($"Task {task.GetType().Name} has passed.");
           passedTasks++;
         }
         else
         {
-          Debug.WriteLine($"Task {task.GetType().Name} has failed.");
+          mLogger.LogInfo($"Task {task.GetType().Name} has failed.");
         }
         stopwatch.Stop();
-        Debug.WriteLine($"Took {stopwatch.ElapsedMilliseconds} ms.");
-        Debug.WriteLine(string.Empty);
+        mLogger.LogInfo($"Took {stopwatch.ElapsedMilliseconds} ms.");
+        mLogger.LogInfo(string.Empty);
         elapsedTotal += stopwatch.ElapsedMilliseconds;
         stopwatch.Reset();
       }
-      Debug.WriteLine("Integration tests finished.");
-      Debug.WriteLine($"Took a total of {elapsedTotal} ms.");
-      Debug.WriteLine($"{passedTasks}/{integrationTaskTypes.Count()} tasks were succesful.");
-      Debug.WriteLine("Press any key to exit.");
-    }
-
-    protected override void OnSleep()
-    {
-      // Handle when your app sleeps
-    }
-
-    protected override void OnResume()
-    {
-      // Handle when your app resumes
+      mLogger.LogInfo("Integration tests finished.");
+      mLogger.LogInfo($"{passedTasks}/{integrationTaskTypes.Count()} tasks were succesful.");
+      mLogger.LogInfo($"Took a total of {elapsedTotal} ms.");
+      mLogger.LogInfo("Press any key to exit.");
     }
   }
 }

@@ -12,17 +12,19 @@ namespace MVPathway.Integration.Tasks.Core
 {
   public class PresenterDelegationTask : CoreIntegrationTask
   {
-    private readonly IPresenter mPresenter;
+    private readonly IDiContainer mContainer;
     private readonly IViewModelManager mViewModelManager;
+    private IPresenter mPresenter;
 
-    public PresenterDelegationTask(IPresenter presenter, IViewModelManager viewModelManager)
+    public PresenterDelegationTask(IDiContainer container, IViewModelManager viewModelManager)
     {
-      mPresenter = presenter;
+      mContainer = container;
       mViewModelManager = viewModelManager;
     }
 
     public override bool Execute()
     {
+      mPresenter = mContainer.Resolve<IPresenter>();
       string cPageException = "Cannot create page";
 
       var menuVmDef = new ViewModelDefinition();
@@ -57,15 +59,15 @@ namespace MVPathway.Integration.Tasks.Core
       }
 
       // close
-      first = mPresenter.Close<FirstViewModel>().Result;
-      if (first == null || !first.NavFrom)
-      {
-        return false;
-      }
       second = mPresenter.Close(
         x => x.HasQuality<MyQuality>())
         .Result as SecondViewModel;
       if (second == null || !second.NavFrom)
+      {
+        return false;
+      }
+      first = mPresenter.Close<FirstViewModel>().Result;
+      if (first == null || !first.NavFrom)
       {
         return false;
       }

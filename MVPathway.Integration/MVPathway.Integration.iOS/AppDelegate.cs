@@ -21,7 +21,7 @@ namespace MVPathway.Integration.iOS
     public override bool FinishedLaunching(UIApplication app, NSDictionary options)
     {
       global::Xamarin.Forms.Forms.Init();
-      LoadApplication(PathwayCore.Create<App>());
+      LoadApplication(PathwayFactory.Create<App>());
 
       return base.FinishedLaunching(app, options);
     }
