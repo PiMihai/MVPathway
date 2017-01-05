@@ -1,4 +1,5 @@
 ﻿{
+  "supports": {},
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "Xamarin.Forms": "2.3.2.127"
