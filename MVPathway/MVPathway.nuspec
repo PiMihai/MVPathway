@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>App flow improvements; Bugfixes</releaseNotes>
+    <releaseNotes>Switch from .NET Standard 1.4 to PCL 7</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework</tags>
     <dependencies>
@@ -20,7 +20,4 @@
       </group>
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\MVPathway.dll" target="lib\netstandard1.4\MVPathway.dll" />
-  </files>
 </package>
