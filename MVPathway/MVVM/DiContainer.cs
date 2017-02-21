@@ -6,7 +6,7 @@ namespace MVPathway.MVVM
 {
   class DiContainer : IDiContainer
   {
-    private readonly IContainer mContainer = new Container(scopeContext: new ThreadScopeContext());
+    private readonly IContainer mContainer = new Container();
 
     public bool IsRegistered<T>() => mContainer.IsRegistered<T>();
 
@@ -16,10 +16,10 @@ namespace MVPathway.MVVM
       {
         mContainer.Unregister(type);
       }
-      mContainer.Register(type);
+      mContainer.Register(type, asSingleton ? Reuse.Singleton : Reuse.Transient);
     }
 
-    public void Register<T>(T singletonInstance) where T : class
+    public void RegisterInstance<T>(T singletonInstance) where T : class
     {
       if (mContainer.IsRegistered<T>())
       {

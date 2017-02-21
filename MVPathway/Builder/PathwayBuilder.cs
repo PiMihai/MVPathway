@@ -22,7 +22,7 @@ namespace MVPathway.Builder
       where TDiContainer : IDiContainer
     {
       Container = Activator.CreateInstance<TDiContainer>();
-      Container.Register(Container);
+      Container.RegisterInstance(Container);
 
       return this;
     }

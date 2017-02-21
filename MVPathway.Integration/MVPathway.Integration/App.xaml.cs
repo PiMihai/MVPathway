@@ -29,7 +29,7 @@ namespace MVPathway.Integration
       MainPage = new ContentPage();
     }
 
-    protected override void OnStart()
+    protected override async void OnStart()
     {
       base.OnStart();
 
@@ -53,7 +53,7 @@ namespace MVPathway.Integration
         var result = false;
         try
         {
-          result = task.Execute().Result;
+          result = await task.Execute();
         }
         catch (Exception e)
         {

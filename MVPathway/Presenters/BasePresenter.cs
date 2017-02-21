@@ -43,7 +43,8 @@ namespace MVPathway.Presenters
       return viewModel;
     }
 
-    public async Task<TResult> GetResult<TViewModel, TResult>(object parameter = null) where TViewModel : BaseResultViewModel<TResult>
+    public async Task<TResult> GetResult<TViewModel, TResult>(object parameter = null)
+      where TViewModel : BaseResultViewModel<TResult>
     {
       var viewModel = Container.Resolve<TViewModel>();
       return await GetResult(viewModel, parameter);
