@@ -1,18 +1,19 @@
 ﻿using MVPathway.Integration.Tasks.Base;
 using MVPathway.Utils.Converters;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace MVPathway.Integration.Tasks.Utils
 {
   public class ConverterTask : UtilsIntegrationTask
   {
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
       return testBoolToNotBoolConverter() &&
              testBoolToStringConverter();
     }
 
-    bool testBoolToNotBoolConverter()
+    private static bool testBoolToNotBoolConverter()
     {
       var c = new BoolToNotBoolConverter();
 
@@ -22,7 +23,7 @@ namespace MVPathway.Integration.Tasks.Utils
               (bool)c.ConvertBack(false, typeof(bool), null, CultureInfo.InvariantCulture);
     }
 
-    bool testBoolToStringConverter()
+    private static bool testBoolToStringConverter()
     {
       var c = new BoolToStringConverter();
       var bOptions = "yes,no";

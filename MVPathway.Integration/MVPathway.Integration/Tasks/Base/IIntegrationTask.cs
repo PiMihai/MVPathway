@@ -1,7 +1,9 @@
-﻿namespace MVPathway.Integration.Tasks.Base
+﻿using System.Threading.Tasks;
+
+namespace MVPathway.Integration.Tasks.Base
 {
   public interface IIntegrationTask
   {
-    bool Execute();
+    Task<bool> Execute();
   }
 }

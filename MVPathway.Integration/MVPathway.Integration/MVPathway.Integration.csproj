@@ -56,11 +56,13 @@
     <Compile Include="Tasks\Core\MessagingSubscriptionTask.cs" />
     <Compile Include="Tasks\Core\PageResolutionTask.cs" />
     <Compile Include="Tasks\Core\PresenterDelegationTask.cs" />
+    <Compile Include="Tasks\Core\ResultResolutionTask.cs" />
     <Compile Include="Tasks\Core\ServiceResolutionTask.cs" />
     <Compile Include="Tasks\Utils\ConverterTask.cs" />
     <Compile Include="Tasks\Utils\UtilsPresenterDelegationTasks.cs" />
     <Compile Include="ViewModels\FirstViewModel.cs" />
     <Compile Include="ViewModels\FlagViewModel.cs" />
+    <Compile Include="ViewModels\OkResultViewModel.cs" />
     <Compile Include="ViewModels\Qualities\MyQuality.cs" />
     <Compile Include="ViewModels\SecondViewModel.cs" />
   </ItemGroup>

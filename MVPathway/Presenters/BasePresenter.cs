@@ -13,7 +13,7 @@ namespace MVPathway.Presenters
     protected IDiContainer Container { get; private set; }
     protected IViewModelManager ViewModelManager { get; private set; }
 
-    public BasePresenter(IDiContainer container, IViewModelManager viewModelManager)
+    protected BasePresenter(IDiContainer container, IViewModelManager viewModelManager)
     {
       Container = container;
       ViewModelManager = viewModelManager;
@@ -39,8 +39,33 @@ namespace MVPathway.Presenters
     public virtual async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter = null)
       where TViewModel : BaseViewModel
     {
-      viewModel.OnNavigatedTo(parameter);
+      await viewModel.OnNavigatedTo(parameter);
       return viewModel;
+    }
+
+    public async Task<TResult> GetResult<TViewModel, TResult>(object parameter = null) where TViewModel : BaseResultViewModel<TResult>
+    {
+      var viewModel = Container.Resolve<TViewModel>();
+      return await GetResult(viewModel, parameter);
+    }
+
+    public async Task<TResult> GetResult<TResult>(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
+    {
+      var viewModel = ViewModelManager.ResolveViewModel(definitionFilter) as BaseResultViewModel<TResult>;
+      if (ViewModelManager == null)
+      {
+        return default(TResult);
+      }
+      return await GetResult(viewModel, parameter);
+    }
+
+    public virtual async Task<TResult> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null)
+    {
+      viewModel.TaskCompletionSource = new TaskCompletionSource<TResult>();
+      await Show(viewModel, parameter).ConfigureAwait(false);
+      var result = await viewModel.TaskCompletionSource.Task;
+      await Close(viewModel, parameter);
+      return result;
     }
 
     public async Task<TViewModel> Close<TViewModel>(object parameter = null)
@@ -63,7 +88,7 @@ namespace MVPathway.Presenters
     public virtual async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter = null)
       where TViewModel : BaseViewModel
     {
-      viewModel.OnNavigatingFrom(parameter);
+      await viewModel.OnNavigatingFrom(parameter);
       return viewModel;
     }
 

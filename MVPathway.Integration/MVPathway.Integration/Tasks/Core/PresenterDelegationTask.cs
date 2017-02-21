@@ -1,7 +1,7 @@
 ﻿using MVPathway.MVVM.Abstractions;
 using System;
+using System.Threading.Tasks;
 using MVPathway.Integration.ViewModels;
-using MVPathway.Integration.Presenters;
 using MVPathway.Integration.ViewModels.Qualities;
 using MVPathway.Integration.Tasks.Base;
 using MVPathway.Utils.ViewModels.Qualities;
@@ -22,10 +22,10 @@ namespace MVPathway.Integration.Tasks.Core
       mViewModelManager = viewModelManager;
     }
 
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
       mPresenter = mContainer.Resolve<IPresenter>();
-      string cPageException = "Cannot create page";
+      const string cPageException = "Cannot create page";
 
       var menuVmDef = new ViewModelDefinition();
       menuVmDef.AddQuality<MenuQuality>();
@@ -50,32 +50,26 @@ namespace MVPathway.Integration.Tasks.Core
       {
         return false;
       }
-      var second = mPresenter.Show(
-        def => def.HasQuality<MyQuality>())
-        .Result as SecondViewModel;
+      var second = await mPresenter.Show(
+        def => def.HasQuality<MyQuality>()) as SecondViewModel;
       if (second == null || !second.NavTo)
       {
         return false;
       }
 
       // close
-      second = mPresenter.Close(
-        x => x.HasQuality<MyQuality>())
-        .Result as SecondViewModel;
+      second = await mPresenter.Close(
+        x => x.HasQuality<MyQuality>()) as SecondViewModel;
       if (second == null || !second.NavFrom)
       {
         return false;
       }
-      first = mPresenter.Close<FirstViewModel>().Result;
-      if (first == null || !first.NavFrom)
-      {
-        return false;
-      }
+      first = await mPresenter.Close<FirstViewModel>();
+
+      return first != null && first.NavFrom;
 
       // TODO : find way to test alerts
       //return PathwayCore.DisplayAlertAsync("Alert", "Are you sure?", "Ok").Result;
-
-      return true;
     }
   }
 }

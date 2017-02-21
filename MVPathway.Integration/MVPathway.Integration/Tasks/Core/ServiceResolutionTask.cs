@@ -1,4 +1,5 @@
-﻿using MVPathway.Integration.Services;
+﻿using System.Threading.Tasks;
+using MVPathway.Integration.Services;
 using MVPathway.Integration.Services.Contracts;
 using MVPathway.Integration.Tasks.Base;
 using MVPathway.MVVM.Abstractions;
@@ -14,7 +15,7 @@ namespace MVPathway.Integration.Tasks.Core
       mContainer = container;
     }
 
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
       mContainer.Register<IService, MyService>();
       var refA = mContainer.Resolve<IService>();

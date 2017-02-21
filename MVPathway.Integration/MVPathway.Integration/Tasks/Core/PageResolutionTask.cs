@@ -1,4 +1,5 @@
-﻿using MVPathway.Integration.Pages;
+﻿using System.Threading.Tasks;
+using MVPathway.Integration.Pages;
 using MVPathway.Integration.Tasks.Base;
 using MVPathway.Integration.ViewModels;
 using MVPathway.Integration.ViewModels.Qualities;
@@ -17,9 +18,9 @@ namespace MVPathway.Integration.Tasks.Core
       mViewModelmanager = viewModelManager;
     }
 
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
-      base.Execute();
+      await base.Execute();
 
       mViewModelmanager.RegisterPageForViewModel<FirstViewModel, FirstPage>();
       var definition = new ViewModelDefinition();
@@ -27,17 +28,13 @@ namespace MVPathway.Integration.Tasks.Core
       mViewModelmanager.RegisterPageForViewModel<SecondViewModel, SecondPage>(definition);
 
       var firstPage = mViewModelmanager.ResolvePageForViewModel(mContainer.Resolve<FirstViewModel>());
-      if(firstPage == null || !(firstPage is FirstPage))
+      if(!(firstPage is FirstPage))
       {
         return false;
       }
 
       var secondPage = mViewModelmanager.ResolvePageForViewModel(x => x.HasQuality<MyQuality>());
-      if(secondPage == null || !(secondPage is SecondPage))
-      {
-        return false;
-      }
-      return true;
+      return secondPage is SecondPage;
     }
   }
 }

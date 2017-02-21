@@ -2,6 +2,7 @@
 using MVPathway.Integration.Tasks.Base;
 using MVPathway.Messages.Abstractions;
 using System;
+using System.Threading.Tasks;
 
 namespace MVPathway.Integration.Tasks.Core
 {
@@ -14,9 +15,9 @@ namespace MVPathway.Integration.Tasks.Core
       mMessagingManager = messagingManager;
     }
 
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
-      base.Execute();
+      await base.Execute();
 
       var received = false;
       var content = "Foo";

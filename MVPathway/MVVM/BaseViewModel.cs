@@ -1,4 +1,5 @@
-﻿using MVPathway.MVVM.Abstractions;
+﻿using System.Threading.Tasks;
+using MVPathway.MVVM.Abstractions;
 
 namespace MVPathway.MVVM
 {
@@ -6,8 +7,8 @@ namespace MVPathway.MVVM
   {
     public ViewModelDefinition Definition { get; internal set; }
 
-    protected internal virtual void OnNavigatedTo(object parameter) { }
+    protected internal virtual async Task OnNavigatedTo(object parameter) { }
 
-    protected internal virtual void OnNavigatingFrom(object parameter) { }
+    protected internal virtual async Task OnNavigatingFrom(object parameter) { }
   }
 }

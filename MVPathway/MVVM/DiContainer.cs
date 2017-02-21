@@ -6,7 +6,7 @@ namespace MVPathway.MVVM
 {
   class DiContainer : IDiContainer
   {
-    private readonly IContainer mContainer = new Container();
+    private readonly IContainer mContainer = new Container(scopeContext: new ThreadScopeContext());
 
     public bool IsRegistered<T>() => mContainer.IsRegistered<T>();
 

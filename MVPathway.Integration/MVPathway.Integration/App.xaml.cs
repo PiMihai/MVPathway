@@ -12,7 +12,7 @@ using Xamarin.Forms;
 
 namespace MVPathway.Integration
 {
-  public partial class App : PathwayApplication
+  public partial class App
   {
     private IDiContainer mContainer;
     private ILogger mLogger;
@@ -45,15 +45,15 @@ namespace MVPathway.Integration
       foreach (var taskType in integrationTaskTypes)
       {
         var app = PathwayFactory.Create<App>();
-        app.mContainer.Register(taskType, true);
+        app.mContainer.Register(taskType);
 
         var task = app.mContainer.Resolve(taskType) as IIntegrationTask;
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        bool result = false;
+        var result = false;
         try
         {
-          result = task.Execute();
+          result = task.Execute().Result;
         }
         catch (Exception e)
         {

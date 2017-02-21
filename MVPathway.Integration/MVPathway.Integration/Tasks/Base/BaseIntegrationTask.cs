@@ -1,16 +1,12 @@
-﻿namespace MVPathway.Integration.Tasks.Base
+﻿using System.Threading.Tasks;
+
+namespace MVPathway.Integration.Tasks.Base
 {
   public abstract class BaseIntegrationTask : IIntegrationTask
   {
-    protected virtual void init()
+    public virtual Task<bool> Execute()
     {
-
-    }
-
-    public virtual bool Execute()
-    {
-      init();
-      return true;
+      return Task.FromResult(true);
     }
   }
 }

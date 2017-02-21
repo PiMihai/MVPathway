@@ -1,4 +1,5 @@
-﻿using MVPathway.Integration.Tasks.Core;
+﻿using System.Threading.Tasks;
+using MVPathway.Integration.Tasks.Core;
 using MVPathway.Utils.Presenters;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Presenters.Abstractions;
@@ -10,10 +11,10 @@ namespace MVPathway.Integration.Tasks.Utils
     public NavigationPagePresenterDelegationTask(IDiContainer container, IViewModelManager viewModelManager)
       : base(container, viewModelManager) { }
 
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
       Container.Register<IPresenter, NavigationPagePresenter>();
-      return base.Execute();
+      return await base.Execute();
     }
   }
 
@@ -22,10 +23,10 @@ namespace MVPathway.Integration.Tasks.Utils
     public NavigableMasterDetailPresenterDelegationTask(IDiContainer container, IViewModelManager viewModelManager)
       : base(container, viewModelManager) { }
 
-    public override bool Execute()
+    public override async Task<bool> Execute()
     {
       Container.Register<IPresenter, NavigableMasterDetailPresenter>();
-      return base.Execute();
+      return await base.Execute();
     }
   }
 

@@ -1,4 +1,5 @@
-﻿using MVPathway.MVVM;
+﻿using System.Threading.Tasks;
+using MVPathway.MVVM;
 
 namespace MVPathway.Integration.ViewModels
 {
@@ -7,12 +8,12 @@ namespace MVPathway.Integration.ViewModels
     public bool NavTo { get; private set; }
     public bool NavFrom { get; private set; }
 
-    protected override void OnNavigatedTo(object parameter)
+    protected override async Task OnNavigatedTo(object parameter)
     {
       NavTo = true;
     }
 
-    protected override void OnNavigatingFrom(object parameter)
+    protected override async Task OnNavigatingFrom(object parameter)
     {
       NavFrom = true;
     }
