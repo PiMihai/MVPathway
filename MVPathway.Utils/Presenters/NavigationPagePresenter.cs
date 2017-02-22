@@ -14,7 +14,7 @@ namespace MVPathway.Utils.Presenters
 
     private readonly ILogger mLogger;
     private readonly NavigationPage mNavigationPage;
-    private Stack<Type> mViewModelTypeStack = new Stack<Type>();
+    private readonly Stack<Type> mViewModelTypeStack = new Stack<Type>();
 
     public NavigationPagePresenter(IViewModelManager viewModelManager,
                                    IDiContainer container,
@@ -30,7 +30,7 @@ namespace MVPathway.Utils.Presenters
       await base.Show(viewModel, parameter);
 
       var page = ViewModelManager.ResolvePageForViewModel(viewModel);
-      await mNavigationPage.PushAsync(page);
+      Device.BeginInvokeOnMainThread(async () => await mNavigationPage.PushAsync(page));
       mViewModelTypeStack.Push(typeof(TViewModel));
 
       return viewModel;
@@ -45,7 +45,7 @@ namespace MVPathway.Utils.Presenters
         mLogger.LogWarning(cInvalidViewModelToCloseError);
         return null;
       }
-      await mNavigationPage.PopAsync();
+      Device.BeginInvokeOnMainThread(async () => await mNavigationPage.PopAsync());
       mViewModelTypeStack.Pop();
 
       return viewModel;
