@@ -25,7 +25,7 @@ namespace MVPathway.Utils.Presenters
       Application.Current.MainPage = mNavigationPage = new NavigationPage();
     }
 
-    public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+    public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter = null)
     {
       await base.Show(viewModel, parameter);
 
@@ -36,7 +36,7 @@ namespace MVPathway.Utils.Presenters
       return viewModel;
     }
 
-    public override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
+    public override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter = null)
     {
       await base.Close(viewModel, parameter);
 

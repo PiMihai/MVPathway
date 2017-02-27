@@ -4,7 +4,10 @@ using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
 using MVPathway.Utils.ViewModels.Qualities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using MVPathway.Logging.Abstractions;
+using MVPathway.MVVM;
 using Xamarin.Forms;
 
 namespace MVPathway.Utils.Presenters
@@ -13,9 +16,10 @@ namespace MVPathway.Utils.Presenters
   {
     private const string cViewModelNotTaggedMessage = "Unknown ViewModel type. If you are using the NavigableMasterDetailPresenters, you must tag all your MVPathway ViewModels with either IMenuViewModel, IMainChildViewModel, IChildViewModel or IFullViewModel.";
     private const string cMainChildNotRegisteredMessage = "IMainChildViewModel not registered. Please register your main child view model as an interface before trying to show the menu.";
+    private const string cInvalidViewModelToCloseError = "TViewModel to close is not the same type as the one on top of the stack.";
 
-    private readonly IMessagingManager mMessagingManager;
-
+    private readonly ILogger mLogger;
+    private readonly Stack<BaseViewModel> mViewModelStack = new Stack<BaseViewModel>();
     private MasterDetailPage mMasterDetailPage;
 
     public bool IsDrawerOpen => mMasterDetailPage?.IsPresented ?? false;
@@ -24,13 +28,13 @@ namespace MVPathway.Utils.Presenters
 
     public NavigableMasterDetailPresenter(IViewModelManager viewModelManager,
                                           IMessagingManager messagingManager,
+                                          ILogger logger,
                                           IDiContainer container)
         : base(container, viewModelManager)
     {
-      mMessagingManager = messagingManager;
-
+      mLogger = logger;
       MenuBehaviour = MasterBehavior.Popover;
-      mMessagingManager.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);
+      messagingManager.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);
     }
 
     public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
@@ -70,7 +74,10 @@ namespace MVPathway.Utils.Presenters
           var menuVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MenuQuality>());
           await Show(menuVm, null);
         }
-        mMasterDetailPage.Detail = new NavigationPage(page);
+        if (mMasterDetailPage != null)
+        {
+          mMasterDetailPage.Detail = new NavigationPage(page);
+        }
       }
       else if (viewModel.Definition.HasQuality<FullscreenQuality>())
       {
@@ -81,6 +88,8 @@ namespace MVPathway.Utils.Presenters
       {
         throw new Exception(cViewModelNotTaggedMessage);
       }
+
+      mViewModelStack.Push(viewModel);
       return viewModel;
     }
 
@@ -88,6 +97,13 @@ namespace MVPathway.Utils.Presenters
     {
       await base.Close(viewModel, parameter);
 
+      if (mViewModelStack.Peek() != viewModel)
+      {
+        mLogger.LogWarning(cInvalidViewModelToCloseError);
+        return null;
+      }
+
+      mViewModelStack.Pop();
       if (viewModel.Definition.HasQuality<ChildQuality>())
       {
         var mainChildVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MainChildQuality>());
@@ -95,9 +111,10 @@ namespace MVPathway.Utils.Presenters
       }
       else if (viewModel.Definition.HasQuality<FullscreenQuality>())
       {
-        var menuVm = ViewModelManager.ResolveViewModel(def => def.HasQuality<MenuQuality>());
-        await Show(menuVm, null);
+        var lastVm = mViewModelStack.Peek();
+        await Show(lastVm, null);
       }
+      
       return viewModel;
     }
 
