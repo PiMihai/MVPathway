@@ -26,7 +26,6 @@ namespace MVPathway.Integration.Droid
 		
 		public static void UpdateIdValues()
 		{
-			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::MVPathway.Integration.Droid.Resource.Attribute.actionBarSize;
 		}
 		
 		public partial class Animation
