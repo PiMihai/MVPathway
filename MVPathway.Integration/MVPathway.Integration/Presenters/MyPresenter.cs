@@ -1,4 +1,5 @@
-﻿using MVPathway.MVVM.Abstractions;
+﻿using MVPathway.Logging.Abstractions;
+using MVPathway.MVVM.Abstractions;
 using MVPathway.Presenters;
 using System.Threading.Tasks;
 
@@ -6,8 +7,8 @@ namespace MVPathway.Integration.Presenters
 {
   class MyPresenter : BasePresenter
   {
-    public MyPresenter(IDiContainer container, IViewModelManager viewModelManager)
-      : base(container, viewModelManager)
+    public MyPresenter(IDiContainer container, IViewModelManager viewModelManager, ILogger logger)
+      : base(container, viewModelManager, logger)
     {
     }
 

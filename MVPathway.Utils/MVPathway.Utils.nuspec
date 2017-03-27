@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Switch from .NET Standard 1.4 to PCL 7</releaseNotes>
+    <releaseNotes>Improved presenters</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework utils</tags>
   </metadata>
