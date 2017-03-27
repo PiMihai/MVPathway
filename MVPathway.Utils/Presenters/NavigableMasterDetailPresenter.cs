@@ -6,7 +6,10 @@ using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
 using MVPathway.Utils.ViewModels.Qualities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using MVPathway.Logging.Abstractions;
+using MVPathway.MVVM;
 using Xamarin.Forms;
 
 namespace MVPathway.Utils.Presenters

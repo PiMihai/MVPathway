@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MVPathway\MVPathway.csproj">
-      <Project>{13ca4ff5-de32-43dd-a637-531303e580a7}</Project>
+      <Project>{9c732f17-8d8f-47c8-8e62-270185222676}</Project>
       <Name>MVPathway</Name>
     </ProjectReference>
   </ItemGroup>
