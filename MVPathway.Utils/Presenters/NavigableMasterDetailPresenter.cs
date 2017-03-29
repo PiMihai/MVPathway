@@ -41,8 +41,6 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
         {
-            _messagingManager.Send(new MenuToggleMessage());
-
             if (viewModel.Definition.HasQuality<ChildQuality>() &&
                 NavigationStack.Count > 0 &&
                 typeof(TViewModel).Name != NavigationStack.Peek().GetType().Name &&
