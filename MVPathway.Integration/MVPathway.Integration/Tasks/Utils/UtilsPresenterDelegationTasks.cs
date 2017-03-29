@@ -3,6 +3,7 @@ using MVPathway.Integration.Tasks.Core;
 using MVPathway.Utils.Presenters;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Presenters.Abstractions;
+using Xamarin.Forms;
 
 namespace MVPathway.Integration.Tasks.Utils
 {
@@ -25,7 +26,7 @@ namespace MVPathway.Integration.Tasks.Utils
 
     public override async Task<bool> Execute()
     {
-      Container.Register<IPresenter, NavigableMasterDetailPresenter>();
+      Container.Register<IPresenter, NavigableMasterDetailPresenter<MasterDetailPage>>();
       return await base.Execute();
     }
   }

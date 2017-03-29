@@ -6,22 +6,20 @@ using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
 using MVPathway.Utils.ViewModels.Qualities;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using MVPathway.Logging.Abstractions;
-using MVPathway.MVVM;
 using Xamarin.Forms;
 
 namespace MVPathway.Utils.Presenters
 {
-    public class NavigableMasterDetailPresenter : BasePresenter
+    public class NavigableMasterDetailPresenter<TMasterDetailPage> : BasePresenter
+        where TMasterDetailPage : MasterDetailPage
     {
         private const string VIEW_MODEL_NOT_TAGGED_MESSAGE = "Unknown ViewModel type. If you are using the NavigableMasterDetailPresenters, you must tag all your MVPathway ViewModels with either IMenuViewModel, IMainChildViewModel, IChildViewModel or IFullViewModel.";
         private const string MAIN_CHILD_NOT_REGISTERED_MESSAGE = "IMainChildViewModel not registered. Please register your main child view model as an interface before trying to show the menu.";
 
         private readonly IMessagingManager _messagingManager;
 
-        private MasterDetailPage _masterDetailPage;
+        private TMasterDetailPage _masterDetailPage;
         private NavigationPage _navigationPage;
         private bool _isHandledPop;
 
@@ -67,11 +65,9 @@ namespace MVPathway.Utils.Presenters
                     {
                         page.Title = "Menu";
                     }
-                    _masterDetailPage = new MasterDetailPage
-                    {
-                        MasterBehavior = MenuBehaviour,
-                        Master = page,
-                    };
+                    _masterDetailPage = Activator.CreateInstance<TMasterDetailPage>();
+                    _masterDetailPage.MasterBehavior = MenuBehaviour;
+                    _masterDetailPage.Master = page;
                 }
                 try
                 {
@@ -101,6 +97,10 @@ namespace MVPathway.Utils.Presenters
                     var currentPage = _navigationPage.CurrentPage;
                     await _navigationPage.PushAsync(page);
                     _navigationPage.Navigation.RemovePage(currentPage);
+                }
+                if (viewModel.Definition.HasQuality<ModalQuality>())
+                {
+                    NavigationPage.SetHasNavigationBar(page, false);
                 }
             }
             else if (viewModel.Definition.HasQuality<FullscreenQuality>())
@@ -159,7 +159,7 @@ namespace MVPathway.Utils.Presenters
 
         private async Task onNavigationPagePopped(object sender, NavigationEventArgs e)
         {
-            if(_isHandledPop)
+            if (_isHandledPop)
             {
                 return;
             }
