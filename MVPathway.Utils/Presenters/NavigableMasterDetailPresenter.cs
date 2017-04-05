@@ -44,16 +44,17 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter)
         {
-            if (await base.Show(viewModel, parameter) == null)
-            {
-                return null;
-            }
-
             if (viewModel.Definition.HasQuality<ChildQuality>() &&
               NavigationStack.Count > 0 &&
+              NavigationStack.Peek().GetType().Name != viewModel.GetType().Name &&
               NavigationStack.Peek().Definition.HasQuality<ChildQuality>())
             {
                 await Close(NavigationStack.Peek(), null);
+            }
+
+            if (await base.Show(viewModel, parameter) == null)
+            {
+                return null;
             }
 
             var page = ViewModelManager.ResolvePageForViewModel(viewModel);
