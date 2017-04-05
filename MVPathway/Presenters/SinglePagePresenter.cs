@@ -8,26 +8,20 @@ namespace MVPathway.Presenters
 {
     public class SinglePagePresenter : BasePresenter
     {
-        private BaseViewModel _lastViewModel;
-
         public SinglePagePresenter(ILogger logger, IViewModelManager viewModelManager, IDiContainer container)
           : base(container, viewModelManager, logger)
         {
         }
 
-        public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+        public override async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter)
         {
             await base.Show(viewModel, parameter);
-            try
+            var page = ViewModelManager.ResolvePageForViewModel(viewModel);
+            if(page == null)
             {
-                var page = ViewModelManager.ResolvePageForViewModel(viewModel);
-                Application.Current.MainPage = page;
-            }
-            catch
-            {
-                Logger.LogError($"Page not registered for ViewModel type {typeof(TViewModel).FullName}");
                 return null;
             }
+            Application.Current.MainPage = page;
             return viewModel;
         }
 

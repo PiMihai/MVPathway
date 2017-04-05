@@ -6,6 +6,7 @@ using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
 using MVPathway.Utils.ViewModels.Qualities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -18,6 +19,8 @@ namespace MVPathway.Utils.Presenters
         private const string MAIN_CHILD_NOT_REGISTERED_MESSAGE = "IMainChildViewModel not registered. Please register your main child view model as an interface before trying to show the menu.";
 
         private readonly IMessagingManager _messagingManager;
+
+        private readonly Dictionary<Page, NavigationPage> _cachedChildren = new Dictionary<Page, NavigationPage>();
 
         private TMasterDetailPage _masterDetailPage;
         private NavigationPage _navigationPage;
@@ -39,19 +42,18 @@ namespace MVPathway.Utils.Presenters
             _messagingManager.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);
         }
 
-        public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+        public override async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter)
         {
-            if (viewModel.Definition.HasQuality<ChildQuality>() &&
-                NavigationStack.Count > 0 &&
-                typeof(TViewModel).Name != NavigationStack.Peek().GetType().Name &&
-                NavigationStack.Peek().Definition.HasQuality<ChildQuality>())
-            {
-                await Close(NavigationStack.Peek(), null);
-            }
-
             if (await base.Show(viewModel, parameter) == null)
             {
                 return null;
+            }
+
+            if (viewModel.Definition.HasQuality<ChildQuality>() &&
+              NavigationStack.Count > 0 &&
+              NavigationStack.Peek().Definition.HasQuality<ChildQuality>())
+            {
+                await Close(NavigationStack.Peek(), null);
             }
 
             var page = ViewModelManager.ResolvePageForViewModel(viewModel);
@@ -85,9 +87,16 @@ namespace MVPathway.Utils.Presenters
                     Logger.LogError("Cannot show ChildViewModel before MenuViewModel, please show the MenuViewModel first.");
                     return null;
                 }
+                var detailPage = _cachedChildren.ContainsKey(page)
+                    ? _cachedChildren[page]
+                    : new NavigationPage(page);
+
+                NavigationPage.SetHasNavigationBar(page, !viewModel.Definition.HasQuality<ModalQuality>());
+                NavigationPage.SetHasNavigationBar(detailPage, !viewModel.Definition.HasQuality<ModalQuality>());
+
                 if (_navigationPage == null)
                 {
-                    _masterDetailPage.Detail = _navigationPage = new NavigationPage(page);
+                    _masterDetailPage.Detail = _navigationPage = detailPage;
                     _navigationPage.Popped += async (sender, e) => await onNavigationPagePopped(sender, e);
                 }
                 else
@@ -95,10 +104,6 @@ namespace MVPathway.Utils.Presenters
                     var currentPage = _navigationPage.CurrentPage;
                     await _navigationPage.PushAsync(page);
                     _navigationPage.Navigation.RemovePage(currentPage);
-                }
-                if (viewModel.Definition.HasQuality<ModalQuality>())
-                {
-                    NavigationPage.SetHasNavigationBar(page, false);
                 }
             }
             else if (viewModel.Definition.HasQuality<FullscreenQuality>())
@@ -108,11 +113,7 @@ namespace MVPathway.Utils.Presenters
                     Logger.LogError("Cannot show ChildViewModel before MenuViewModel, please show the MenuViewModel first.");
                     return null;
                 }
-                if (viewModel.Definition.HasQuality<ModalQuality>())
-                {
-                    NavigationPage.SetHasBackButton(page, false);
-                }
-                await _navigationPage.PushAsync(page);
+                NavigationPage.SetHasNavigationBar(page, !viewModel.Definition.HasQuality<ModalQuality>());
             }
             else
             {
@@ -121,12 +122,18 @@ namespace MVPathway.Utils.Presenters
             return viewModel;
         }
 
-        public override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
+        public override async Task<BaseViewModel> Close(BaseViewModel viewModel, object parameter)
         {
             if (viewModel.Definition.HasQuality<MenuQuality>())
             {
                 Logger.LogError("Cannot close MenuViewModel, it is the root of the app.");
                 return null;
+            }
+
+            if (viewModel.Definition.HasQuality<ChildQuality>())
+            {
+                await Show(def => def.HasQuality<MainChildQuality>());
+                return viewModel;
             }
 
             if (await base.Close(viewModel, parameter) == null)
@@ -136,8 +143,6 @@ namespace MVPathway.Utils.Presenters
 
             if (viewModel.Definition.HasQuality<FullscreenQuality>())
             {
-
-                NavigationPage.SetHasNavigationBar(_masterDetailPage, true);
                 _isHandledPop = true;
                 await _navigationPage.PopAsync();
                 _isHandledPop = false;

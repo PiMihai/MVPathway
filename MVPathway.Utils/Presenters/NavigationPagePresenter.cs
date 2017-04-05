@@ -1,4 +1,5 @@
 ﻿using MVPathway.Logging.Abstractions;
+using MVPathway.MVVM;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Presenters;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace MVPathway.Utils.Presenters
             Application.Current.MainPage = mNavigationPage = new NavigationPage();
         }
 
-        public override async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter)
+        public override async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter)
         {
             if(await base.Show(viewModel, parameter) == null)
             {
@@ -32,7 +33,7 @@ namespace MVPathway.Utils.Presenters
             return viewModel;
         }
 
-        public override async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter)
+        public override async Task<BaseViewModel> Close(BaseViewModel viewModel, object parameter)
         {
             if(await base.Close(viewModel, parameter) == null)
             {

@@ -29,37 +29,34 @@ namespace MVPathway.Presenters
           where TViewModel : BaseViewModel
         {
             var viewModel = Container.Resolve<TViewModel>();
-            return await Show(viewModel, parameter);
+            return await Show(viewModel, parameter) as TViewModel;
         }
 
         public async Task<BaseViewModel> Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
         {
             var viewModel = ViewModelManager.ResolveViewModel(definitionFilter);
-            if (viewModel == null)
-            {
-                return null;
-            }
             return await Show(viewModel, parameter);
         }
 
-        public virtual async Task<TViewModel> Show<TViewModel>(TViewModel viewModel, object parameter = null)
-          where TViewModel : BaseViewModel
+        public virtual async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter = null)
         {
             if (viewModel == null)
             {
-                Logger.LogWarning($"Tried showing {typeof(TViewModel).Name}, but instance was null.");
+                Logger.LogWarning("Received ViewModel show request, but instance was null.");
                 return null;
             }
+
+            var viewModelType = viewModel.GetType();
             if (NavigationStack.Count > 0)
             {
-                if (NavigationStack.Peek().GetType().Name == typeof(TViewModel).Name)
+                if (NavigationStack.Peek().GetType().Name == viewModelType.Name)
                 {
-                    Logger.LogWarning($"Received show request for {typeof(TViewModel).Name}, but VM already shown.");
+                    Logger.LogWarning($"Received show request for {viewModelType.Name}, but VM already shown.");
                     return null;
                 }
-                await CallOnNavigatingFrom(NavigationStack.Peek(), null);
+                await callOnNavigatingFrom(NavigationStack.Peek(), null);
             }
-            await CallOnNavigatedTo(viewModel, parameter);
+            await callOnNavigatedTo(viewModel, parameter);
             NavigationStack.Push(viewModel);
             return viewModel;
         }
@@ -74,15 +71,16 @@ namespace MVPathway.Presenters
         public async Task<TResult> GetResult<TResult>(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
         {
             var viewModel = ViewModelManager.ResolveViewModel(definitionFilter) as BaseResultViewModel<TResult>;
-            if (viewModel == null)
-            {
-                return default(TResult);
-            }
             return await GetResult(viewModel, parameter);
         }
 
         public virtual async Task<TResult> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null)
         {
+            if (viewModel == null)
+            {
+                return default(TResult);
+            }
+
             viewModel.TaskCompletionSource = new TaskCompletionSource<TResult>();
             await Show(viewModel, parameter).ConfigureAwait(false);
             var result = await viewModel.TaskCompletionSource.Task;
@@ -94,63 +92,55 @@ namespace MVPathway.Presenters
           where TViewModel : BaseViewModel
         {
             var viewModel = Container.Resolve<TViewModel>();
-            return await Close(viewModel, parameter);
+            return await Close(viewModel, parameter) as TViewModel;
         }
 
         public async Task<BaseViewModel> Close(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
         {
             var viewModel = ViewModelManager.ResolveViewModel(definitionFilter);
-            if (viewModel == null)
-            {
-                return null;
-            }
             return await Close(viewModel, parameter);
         }
 
-        public virtual async Task<TViewModel> Close<TViewModel>(TViewModel viewModel, object parameter = null)
-          where TViewModel : BaseViewModel
+        public virtual async Task<BaseViewModel> Close(BaseViewModel viewModel, object parameter = null)
         {
+            if(viewModel == null)
+            {
+                Logger.LogError("Received ViewModel close request, but instance was null.");
+                return null;
+            }
+
+            var viewModelType = viewModel.GetType();
             if (NavigationStack.Count == 0)
             {
-                Logger.LogError($"Received close request for {typeof(TViewModel).Name}, but VM stack is empty.");
+                Logger.LogError($"Received close request for {viewModelType.Name}, but VM stack is empty.");
                 return null;
             }
             var stackTop = NavigationStack.Peek();
-            if (!(stackTop is TViewModel))
+            if (stackTop.GetType() != viewModelType)
             {
-                Logger.LogWarning($"Received close request for {typeof(TViewModel).Name}, but VM stack top type does not match. Close operation will still execute.");
+                Logger.LogWarning($"Received close request for {viewModelType.Name}, but VM stack top type does not match. Close operation will still execute.");
             }
-            await CallOnNavigatingFrom(stackTop, parameter);
+            await callOnNavigatingFrom(stackTop, parameter);
             NavigationStack.Pop();
             if (NavigationStack.Count > 0)
             {
-                await CallOnNavigatedTo(NavigationStack.Peek(), null);
+                await callOnNavigatedTo(NavigationStack.Peek(), null);
             }
             return viewModel;
         }
 
         public abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null);
 
-        protected async Task CallOnNavigatedTo<TViewModel>(TViewModel viewModel, object parameter = null)
+        private async Task callOnNavigatedTo<TViewModel>(TViewModel viewModel, object parameter = null)
             where TViewModel : BaseViewModel
         {
-            if (viewModel == null)
-            {
-                Logger.LogWarning($"Tried showing {typeof(TViewModel).Name}, but instance was null.");
-                return;
-            }
             await viewModel.OnNavigatedTo(parameter);
             Logger.LogInfo($"{viewModel.GetType().Name} OnNavigatedTo called.");
         }
 
-        protected async Task CallOnNavigatingFrom<TViewModel>(TViewModel viewModel, object parameter = null)
+        private async Task callOnNavigatingFrom<TViewModel>(TViewModel viewModel, object parameter = null)
             where TViewModel : BaseViewModel
         {
-            if (viewModel == null)
-            {
-                Logger.LogWarning($"Tried closing {typeof(TViewModel).Name}, but instance was null.");
-                return;
-            }
             await viewModel.OnNavigatingFrom(parameter);
             Logger.LogInfo($"{viewModel.GetType().Name} OnNavigatingFrom called.");
         }
