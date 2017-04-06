@@ -49,7 +49,7 @@ namespace MVPathway.Utils.Presenters
               NavigationStack.Peek().GetType().Name != viewModel.GetType().Name &&
               NavigationStack.Peek().Definition.HasQuality<ChildQuality>())
             {
-                await Close(NavigationStack.Peek(), null);
+                await base.Close(NavigationStack.Peek(), null);
             }
 
             if (await base.Show(viewModel, parameter) == null)
@@ -109,12 +109,13 @@ namespace MVPathway.Utils.Presenters
             }
             else if (viewModel.Definition.HasQuality<FullscreenQuality>())
             {
-                if (_masterDetailPage == null)
+                if (_navigationPage == null)
                 {
-                    Logger.LogError("Cannot show ChildViewModel before MenuViewModel, please show the MenuViewModel first.");
+                    Logger.LogError("Cannot show FullscreenViewModel before MenuViewModel, please show the MenuViewModel first.");
                     return null;
                 }
                 NavigationPage.SetHasNavigationBar(page, !viewModel.Definition.HasQuality<ModalQuality>());
+                await _navigationPage.PushAsync(page);
             }
             else
             {
@@ -131,15 +132,14 @@ namespace MVPathway.Utils.Presenters
                 return null;
             }
 
-            if (viewModel.Definition.HasQuality<ChildQuality>())
-            {
-                await Show(def => def.HasQuality<MainChildQuality>());
-                return viewModel;
-            }
-
             if (await base.Close(viewModel, parameter) == null)
             {
                 return null;
+            }
+
+            if (viewModel.Definition.HasQuality<ChildQuality>())
+            {
+                await Show(def => def.HasQuality<MainChildQuality>());
             }
 
             if (viewModel.Definition.HasQuality<FullscreenQuality>())
