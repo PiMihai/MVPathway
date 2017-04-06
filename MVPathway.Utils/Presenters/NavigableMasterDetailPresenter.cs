@@ -44,6 +44,14 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter)
         {
+            if (viewModel.Definition.HasQuality<ChildQuality>() && _navigationPage != null)
+            {
+                while (_navigationPage.Navigation.NavigationStack.Count > 1)
+                {
+                    await _navigationPage.PopAsync();
+                }
+            }
+
             if (viewModel.Definition.HasQuality<ChildQuality>() &&
               NavigationStack.Count > 0 &&
               NavigationStack.Peek().GetType().Name != viewModel.GetType().Name &&
@@ -172,7 +180,7 @@ namespace MVPathway.Utils.Presenters
             {
                 return;
             }
-            await base.Close(viewModel, null);
+            await Close(viewModel, null);
         }
 
         private void onCloseDrawerMessage(MenuToggleMessage message)
