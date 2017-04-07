@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using MVPathway.MVVM;
+using MVPathway.MVVM.Abstractions;
 
 namespace MVPathway.Integration.ViewModels
 {
-  class FlagViewModel : BaseViewModel
+    class FlagViewModel : BaseViewModel
   {
     public bool NavTo { get; private set; }
     public bool NavFrom { get; private set; }

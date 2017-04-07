@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using MVPathway.MVVM.Abstractions;
 
-namespace MVPathway.MVVM
+namespace MVPathway.MVVM.Abstractions
 {
   public abstract class BaseViewModel : BaseObservableObject
   {

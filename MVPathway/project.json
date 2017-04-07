@@ -1,8 +1,8 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "DryIoc.dll": "2.10.3",
-    "Xamarin.Forms": "2.3.3.193"
+    "DryIoc.dll": "2.10.4",
+    "Xamarin.Forms": "2.3.4.224"
   },
   "frameworks": {
     ".NETPortable,Version=v4.5,Profile=Profile7": {}

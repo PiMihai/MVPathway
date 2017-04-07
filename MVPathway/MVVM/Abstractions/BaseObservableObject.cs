@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace MVPathway.MVVM
+namespace MVPathway.MVVM.Abstractions
 {
     public abstract class BaseObservableObject : INotifyPropertyChanged, IDisposable
     {

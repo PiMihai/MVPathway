@@ -81,9 +81,9 @@ namespace MVPathway.Presenters
                 return default(TResult);
             }
 
-            viewModel.TaskCompletionSource = new TaskCompletionSource<TResult>();
-            await Show(viewModel, parameter).ConfigureAwait(false);
-            var result = await viewModel.TaskCompletionSource.Task;
+            var resultTask = viewModel.ResultTask;
+            await Show(viewModel, parameter);
+            var result = await resultTask;
             await Close(viewModel, parameter);
             return result;
         }

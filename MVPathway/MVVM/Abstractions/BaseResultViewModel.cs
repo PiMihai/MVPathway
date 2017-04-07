@@ -2,13 +2,17 @@
 
 namespace MVPathway.MVVM.Abstractions
 {
-  public abstract class BaseResultViewModel<T> : BaseViewModel
-  {
-    internal TaskCompletionSource<T> TaskCompletionSource { get; set; }
-
-    protected internal void SetResult(T result)
+    public abstract class BaseResultViewModel<T> : BaseViewModel
     {
-      TaskCompletionSource?.SetResult(result);
+        private TaskCompletionSource<T> _taskCompletionSource;
+
+        public Task<T> ResultTask => _taskCompletionSource?.Task.IsCompleted ?? true
+            ? (_taskCompletionSource = new TaskCompletionSource<T>()).Task
+            : _taskCompletionSource.Task;
+
+        protected internal void SetResult(T result)
+        {
+            _taskCompletionSource?.SetResult(result);
+        }
     }
-  }
 }
