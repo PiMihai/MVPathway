@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Improved presenters</releaseNotes>
+    <releaseNotes>Make ONPC public on</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework</tags>
     <dependencies>
