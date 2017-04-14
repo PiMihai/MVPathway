@@ -180,7 +180,7 @@ namespace MVPathway.Utils.Presenters
             {
                 return;
             }
-            await Close(viewModel, null);
+            await base.Close(viewModel, null);
         }
 
         private void onCloseDrawerMessage(MenuToggleMessage message)
