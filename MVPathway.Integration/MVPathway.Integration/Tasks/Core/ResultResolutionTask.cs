@@ -23,7 +23,7 @@ namespace MVPathway.Integration.Tasks.Core
       await base.Execute();
       mVmManager.RegisterPageForViewModel<OkResultViewModel, FirstPage>();
       var result = await mPresenter.GetResult<OkResultViewModel,string>();
-      return result == "Ok";
+      return result.Result == "Ok";
     }
   }
 }

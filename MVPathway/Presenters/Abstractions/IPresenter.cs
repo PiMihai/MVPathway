@@ -11,10 +11,10 @@ namespace MVPathway.Presenters.Abstractions
         Task<BaseViewModel> Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null);
         Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter = null);
 
-        Task<TResult> GetResult<TViewModel, TResult>(object parameter = null)
+        Task<ViewModelResult<TResult>> GetResult<TViewModel, TResult>(object parameter = null)
           where TViewModel : BaseResultViewModel<TResult>;
-        Task<TResult> GetResult<TResult>(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null);
-        Task<TResult> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null);
+        Task<ViewModelResult<TResult>> GetResult<TResult>(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null);
+        Task<ViewModelResult<TResult>> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null);
 
         Task<TViewModel> Close<TViewModel>(object parameter = null) where TViewModel : BaseViewModel;
         Task<BaseViewModel> Close(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null);

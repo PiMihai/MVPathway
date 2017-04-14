@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="MVVM\Abstractions\BaseResultViewModel.cs" />
+    <Compile Include="MVVM\ViewModelResult.cs" />
     <Compile Include="PathwayApplication.cs" />
     <Compile Include="Builder\PathwayBuilder.cs" />
     <Compile Include="Builder\Abstractions\IPathwayBuilder.cs" />

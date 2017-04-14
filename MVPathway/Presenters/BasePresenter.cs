@@ -61,24 +61,28 @@ namespace MVPathway.Presenters
             return viewModel;
         }
 
-        public async Task<TResult> GetResult<TViewModel, TResult>(object parameter = null)
+        public async Task<ViewModelResult<TResult>> GetResult<TViewModel, TResult>(object parameter = null)
           where TViewModel : BaseResultViewModel<TResult>
         {
             var viewModel = Container.Resolve<TViewModel>();
             return await GetResult(viewModel, parameter);
         }
 
-        public async Task<TResult> GetResult<TResult>(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
+        public async Task<ViewModelResult<TResult>> GetResult<TResult>(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
         {
             var viewModel = ViewModelManager.ResolveViewModel(definitionFilter) as BaseResultViewModel<TResult>;
             return await GetResult(viewModel, parameter);
         }
 
-        public virtual async Task<TResult> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null)
+        public virtual async Task<ViewModelResult<TResult>> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null)
         {
             if (viewModel == null)
             {
-                return default(TResult);
+                return new ViewModelResult<TResult>
+                {
+                    Success = false,
+                    Result = default(TResult)
+                };
             }
 
             var resultTask = viewModel.ResultTask;
@@ -103,7 +107,7 @@ namespace MVPathway.Presenters
 
         public virtual async Task<BaseViewModel> Close(BaseViewModel viewModel, object parameter = null)
         {
-            if(viewModel == null)
+            if (viewModel == null)
             {
                 Logger.LogError("Received ViewModel close request, but instance was null.");
                 return null;
