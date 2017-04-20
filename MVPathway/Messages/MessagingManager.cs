@@ -57,7 +57,7 @@ namespace MVPathway.Messages
             {
                 mCallbackMap[messageType] = new List<Delegate>();
             }
-            var callbackList = mCallbackMap[messageType];
+            var callbackList = mCallbackMap[messageType].ToArray();
             foreach (var callback in callbackList)
             {
                 callback.DynamicInvoke(message);
