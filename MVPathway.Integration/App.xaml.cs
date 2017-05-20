@@ -35,7 +35,6 @@ namespace MVPathway.Integration
         public override void Configure(IPathwayBuilder builder)
         {
             base.Configure(builder);
-            builder.UsePresenter<MasterDetailPresenter<MasterDetailPage>>();
             builder.UseNavigationStackDebugger();
         }
 

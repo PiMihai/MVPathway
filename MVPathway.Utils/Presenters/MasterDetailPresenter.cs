@@ -86,7 +86,6 @@ namespace MVPathway.Utils.Presenters
                     : new NavigationPage(page);
 
                 NavigationPage.SetHasNavigationBar(page, !viewModel.Definition.HasQuality<IFullscreenQuality>());
-                NavigationPage.SetHasNavigationBar(detailPage, !viewModel.Definition.HasQuality<IFullscreenQuality>());
 
                 if (_navigationPage == null)
                 {
@@ -95,14 +94,15 @@ namespace MVPathway.Utils.Presenters
                 }
                 else
                 {
-                    Device.BeginInvokeOnMainThread(() =>
+                    await OnUiThread(async () =>
                     {
                         var currentPage = _navigationPage.CurrentPage;
-                        _navigationPage.PushAsync(page);
+                        await _navigationPage.PushAsync(page);
                         if (page != currentPage)
                         {
                             _navigationPage.Navigation.RemovePage(currentPage);
                         }
+                        Application.Current.MainPage = _masterDetailPage;
                     });
                 }
             }
@@ -123,11 +123,6 @@ namespace MVPathway.Utils.Presenters
 
         protected override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
-            if (viewModel.Definition.HasQuality<IChildQuality>())
-            {
-                await Show(def => def.HasQuality<IMainChildQuality>());
-            }
-
             if (viewModel.Definition.HasQuality<IModalQuality>())
             {
                 _isHandledPop = true;
