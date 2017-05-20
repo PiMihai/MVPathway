@@ -44,6 +44,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helpers\MvpHelpers.cs" />
+    <Compile Include="Messages\NavigationStackUpdatedMessage.cs" />
     <Compile Include="MVVM\Abstractions\BaseResultViewModel.cs" />
     <Compile Include="MVVM\ViewModelResult.cs" />
     <Compile Include="PathwayApplication.cs" />
@@ -55,7 +57,7 @@
     <Compile Include="Messages\Abstractions\IMessagingManager.cs" />
     <Compile Include="MVVM\Abstractions\IViewModelManager.cs" />
     <Compile Include="MVVM\Abstractions\IDiContainer.cs" />
-    <Compile Include="MVVM\ViewModelQuality.cs" />
+    <Compile Include="MVVM\IViewModelQuality.cs" />
     <Compile Include="MVVM\ViewModelDefinition.cs" />
     <Compile Include="MVVM\Abstractions\BaseObservableObject.cs" />
     <Compile Include="MVVM\DiContainer.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="Builder\PathwayFactory.cs" />
     <Compile Include="Presenters\BasePresenter.cs" />
     <Compile Include="Presenters\Abstractions\IPresenter.cs" />
+    <Compile Include="Presenters\NavigationRequestType.cs" />
     <Compile Include="Presenters\SinglePagePresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MVVM\Abstractions\BaseViewModel.cs" />

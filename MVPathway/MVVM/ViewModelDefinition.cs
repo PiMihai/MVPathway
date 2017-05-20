@@ -5,35 +5,47 @@ using System.Reflection;
 
 namespace MVPathway.MVVM.Abstractions
 {
-  public sealed class ViewModelDefinition
-  {
-    private List<Type> mQualities = new List<Type>();
-
-    public bool HasQuality<TQuality>()
-      where TQuality : ViewModelQuality
+    public sealed class ViewModelDefinition
     {
-      return mQualities.Any(x => x.FullName == typeof(TQuality).FullName ||
-                                 typeof(TQuality).GetTypeInfo().IsAssignableFrom(x.GetTypeInfo()));
-    }
+        private List<Type> _qualities = new List<Type>();
 
-    public void AddQuality<TQuality>()
-      where TQuality : ViewModelQuality
-    {
-      if(HasQuality<TQuality>())
-      {
-        return;
-      }
-      mQualities.Add(typeof(TQuality));
-    }
+        internal ViewModelDefinition()
+        {
+        }
 
-    public void RemoveQuality<TQuality>()
-      where TQuality : ViewModelQuality
-    {
-      if (!HasQuality<TQuality>())
-      {
-        return;
-      }
-      mQualities.Remove(typeof(TQuality));
+        public bool HasQuality<TQuality>()
+          where TQuality : IViewModelQuality
+        {
+            return _qualities.Any(x => x.FullName == typeof(TQuality).FullName ||
+                                       typeof(TQuality).GetTypeInfo().IsAssignableFrom(x.GetTypeInfo()));
+        }
+
+        public ViewModelDefinition AddQuality<TQuality>()
+          where TQuality : IViewModelQuality
+        {
+            if (HasQuality<TQuality>())
+            {
+                return this;
+            }
+            _qualities.Add(typeof(TQuality));
+            return this;
+        }
+
+        public ViewModelDefinition RemoveQuality<TQuality>()
+          where TQuality : IViewModelQuality
+        {
+            if (!HasQuality<TQuality>())
+            {
+                return this;
+            }
+            _qualities.Remove(typeof(TQuality));
+            return this;
+        }
+
+        public ViewModelDefinition ClearQualities()
+        {
+            _qualities.Clear();
+            return this;
+        }
     }
-  }
 }

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mvp:PathwayApplication xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvp="clr-namespace:MVPathway;assembly=MVPathway"
+             xmlns:mvpuv="clr-namespace:MVPathway.Utils.Views;assembly=MVPathway.Utils"
+             xmlns:converters="clr-namespace:MVPathway.Integration.Converters;assembly=MVPAthway.Integration"
+             x:Class="MVPathway.Integration.App">
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <converters:PresenterTypeListToStringConverter x:Key="PresenterTypeListToStringConverter"/>
+
+            <ControlTemplate x:Key="PageTemplate">
+                <Grid Padding="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Text="{TemplateBinding BindingContext.Title}"
+                           BackgroundColor="{TemplateBinding BindingContext.Color}"
+                           Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                           FontSize="Large"
+                           TextColor="Black"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           HorizontalOptions="FillAndExpand"
+                           VerticalOptions="FillAndExpand"/>
+                    <Button Text="A"
+                            TextColor="{TemplateBinding BindingContext.AColor}"
+                            Command="{TemplateBinding BindingContext.ACommand}"
+                            Grid.Row="1" Grid.Column="0"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="B"
+                            TextColor="{TemplateBinding BindingContext.BColor}"
+                            Command="{TemplateBinding BindingContext.BCommand}"
+                            Grid.Row="2" Grid.Column="0"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="C"
+                            TextColor="{TemplateBinding BindingContext.CColor}"
+                            Command="{TemplateBinding BindingContext.CCommand}"
+                            Grid.Row="3" Grid.Column="0"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="D"
+                            TextColor="{TemplateBinding BindingContext.DColor}"
+                            Command="{TemplateBinding BindingContext.DCommand}"
+                            Grid.Row="4" Grid.Column="0"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="E"
+                            TextColor="{TemplateBinding BindingContext.EColor}"
+                            Command="{TemplateBinding BindingContext.ECommand}"
+                            Grid.Row="1" Grid.Column="1"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="F"
+                            TextColor="{TemplateBinding BindingContext.FColor}"
+                            Command="{TemplateBinding BindingContext.FCommand}"
+                            Grid.Row="2" Grid.Column="1"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="G"
+                            TextColor="{TemplateBinding BindingContext.GColor}"
+                            Command="{TemplateBinding BindingContext.GCommand}"
+                            Grid.Row="3" Grid.Column="1"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="H"
+                            TextColor="{TemplateBinding BindingContext.HColor}"
+                            Command="{TemplateBinding BindingContext.HCommand}"
+                            Grid.Row="4" Grid.Column="1"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <Button Text="Close"
+                            TextColor="White"
+                            Command="{TemplateBinding BindingContext.CloseCommand}"
+                            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BackgroundColor="#111"/>
+                    <mvpuv:NavigationStackDebuggerView BindingContext="{TemplateBinding BindingContext.StackDebugger}"
+                                                       Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       HorizontalOptions="FillAndExpand"
+                                                       VerticalOptions="FillAndExpand"/>
+                </Grid>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</mvp:PathwayApplication>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvpuv="clr-namespace:MVPathway.Utils.Views;assembly=MVPathway.Utils"
+             x:Class="MVPathway.Integration.Pages.MainPage"
+             BackgroundColor="Black">
+    <StackLayout Orientation="Vertical">
+        <Label Text="Select presenter"
+               TextColor="White"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="Start"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"/>
+        <Picker ItemsSource="{Binding Presenters, Converter={StaticResource PresenterTypeListToStringConverter}}"
+                SelectedItem="{Binding SelectedPresenter, Converter={StaticResource PresenterTypeToStringConverter}}"/>
+        <Button Text="Start"
+                Command="{Binding StartCommand}"
+                BackgroundColor="Black"
+                TextColor="White"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="Start"/>
+        <mvpuv:NavigationStackDebuggerView BindingContext="{Binding StackDebugger}"/>
+    </StackLayout>
+</ContentPage>

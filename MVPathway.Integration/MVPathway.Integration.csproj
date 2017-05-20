@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D7A011A3-04BB-4984-9D9D-4B6DCEEB2449}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MVPathway.Integration</RootNamespace>
+    <AssemblyName>MVPathway.Integration</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AppVeyor-Release|AnyCPU'">
+    <OutputPath>bin\AppVeyor-Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\PresenterTypeToStringConverter.cs" />
+    <Compile Include="Pages\APage.xaml.cs">
+      <DependentUpon>APage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\BPage.xaml.cs">
+      <DependentUpon>BPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CPage.xaml.cs">
+      <DependentUpon>CPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\DPage.xaml.cs">
+      <DependentUpon>DPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\EPage.xaml.cs">
+      <DependentUpon>EPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FPage.xaml.cs">
+      <DependentUpon>FPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\GPage.xaml.cs">
+      <DependentUpon>GPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\HPage.xaml.cs">
+      <DependentUpon>HPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Contracts\ITaskRunner.cs" />
+    <Compile Include="Services\TaskRunner.cs" />
+    <Compile Include="Tasks\Messages\TestMessage.cs" />
+    <Compile Include="Tasks\Pages\FirstPage.xaml.cs">
+      <DependentUpon>FirstPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tasks\Pages\SecondPage.xaml.cs">
+      <DependentUpon>SecondPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\Services\Contracts\IService.cs" />
+    <Compile Include="Tasks\Services\MyService.cs" />
+    <Compile Include="Tasks\Base\BaseIntegrationTask.cs" />
+    <Compile Include="Tasks\Base\CoreIntegrationTask.cs" />
+    <Compile Include="Tasks\Base\IIntegrationTask.cs" />
+    <Compile Include="Tasks\Base\UtilsIntegrationTask.cs" />
+    <Compile Include="Tasks\Core\MessagingSubscriptionTask.cs" />
+    <Compile Include="Tasks\Core\PageResolutionTask.cs" />
+    <Compile Include="Tasks\Core\PresenterDelegationTask.cs" />
+    <Compile Include="Tasks\Core\ResultResolutionTask.cs" />
+    <Compile Include="Tasks\Core\ServiceResolutionTask.cs" />
+    <Compile Include="Tasks\Utils\ConverterTask.cs" />
+    <Compile Include="Tasks\ViewModels\FirstViewModel.cs" />
+    <Compile Include="Tasks\ViewModels\FlagViewModel.cs" />
+    <Compile Include="Tasks\ViewModels\OkResultViewModel.cs" />
+    <Compile Include="Tasks\ViewModels\Qualities\MyQuality.cs" />
+    <Compile Include="Tasks\ViewModels\SecondViewModel.cs" />
+    <Compile Include="ViewModels\AViewModel.cs" />
+    <Compile Include="ViewModels\BViewModel.cs" />
+    <Compile Include="ViewModels\CViewModel.cs" />
+    <Compile Include="ViewModels\DViewModel.cs" />
+    <Compile Include="ViewModels\EViewModel.cs" />
+    <Compile Include="ViewModels\FViewModel.cs" />
+    <Compile Include="ViewModels\GViewModel.cs" />
+    <Compile Include="ViewModels\HViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\_ViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tasks\Pages\FirstPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tasks\Pages\SecondPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\APage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\BPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\CPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\DPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\EPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\FPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\GPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\HPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\MainPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MVPathway.Utils\MVPathway.Utils.csproj">
+      <Project>{94ca7246-1361-4d10-b8e3-458b3ea5a4dd}</Project>
+      <Name>MVPathway.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MVPathway\MVPathway.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>MVPathway</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties project_1json__JSONSchema="http://json.schemastore.org/project" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

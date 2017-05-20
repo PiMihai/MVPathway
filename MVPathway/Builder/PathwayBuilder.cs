@@ -8,63 +8,61 @@ using System;
 
 namespace MVPathway.Builder
 {
-  class PathwayBuilder : IPathwayBuilder
-  {
-    public IDiContainer Container { get; private set; }
-    
-    public void SetupPlatform(Action<IDiContainer> platformSetup)
+    public class PathwayBuilder : IPathwayBuilder
     {
-      ensureDiContainerLoaded();
-      platformSetup(Container);
+        public IDiContainer Container { get; private set; }
+
+        internal PathwayBuilder()
+        {
+        }
+
+        public IPathwayBuilder UseDiContainer<TDiContainer>()
+          where TDiContainer : IDiContainer
+        {
+            Container = Activator.CreateInstance<TDiContainer>();
+            Container.RegisterInstance(Container);
+
+            return this;
+        }
+
+        public IPathwayBuilder UseLogger<TLogger>() where TLogger : ILogger
+        {
+            ensureDiContainerLoaded();
+            Container.Register<ILogger, TLogger>();
+
+            return this;
+        }
+
+        public IPathwayBuilder UseMessagingManager<TMessagingManager>() where TMessagingManager : IMessagingManager
+        {
+            ensureDiContainerLoaded();
+            Container.Register<IMessagingManager, TMessagingManager>();
+
+            return this;
+        }
+
+        public IPathwayBuilder UsePresenter<TPresenter>() where TPresenter : IPresenter
+        {
+            ensureDiContainerLoaded();
+            Container.Register<IPresenter, TPresenter>();
+
+            return this;
+        }
+
+        public IPathwayBuilder UseViewModelManager<TViewModelManager>() where TViewModelManager : IViewModelManager
+        {
+            ensureDiContainerLoaded();
+            Container.Register<IViewModelManager, TViewModelManager>();
+
+            return this;
+        }
+
+        private void ensureDiContainerLoaded()
+        {
+            if (Container == null)
+            {
+                Container = new DiContainer();
+            }
+        }
     }
-
-    public IPathwayBuilder UseDiContainer<TDiContainer>()
-      where TDiContainer : IDiContainer
-    {
-      Container = Activator.CreateInstance<TDiContainer>();
-      Container.RegisterInstance(Container);
-
-      return this;
-    }
-
-    public IPathwayBuilder UseLogger<TLogger>() where TLogger : ILogger
-    {
-      ensureDiContainerLoaded();
-      Container.Register<ILogger, TLogger>();
-
-      return this;
-    }
-
-    public IPathwayBuilder UseMessagingManager<TMessagingManager>() where TMessagingManager : IMessagingManager
-    {
-      ensureDiContainerLoaded();
-      Container.Register<IMessagingManager, TMessagingManager>();
-
-      return this;
-    }
-
-    public IPathwayBuilder UsePresenter<TPresenter>() where TPresenter : IPresenter
-    {
-      ensureDiContainerLoaded();
-      Container.Register<IPresenter, TPresenter>();
-
-      return this;
-    }
-
-    public IPathwayBuilder UseViewModelManager<TViewModelManager>() where TViewModelManager : IViewModelManager
-    {
-      ensureDiContainerLoaded();
-      Container.Register<IViewModelManager, TViewModelManager>();
-
-      return this;
-    }
-
-    private void ensureDiContainerLoaded()
-    {
-      if(Container == null)
-      {
-        Container = new DiContainer();
-      }
-    }
-  }
 }

@@ -2,9 +2,9 @@
 
 namespace MVPathway.Utils.ViewModels.Qualities
 {
-    public class MenuQuality : FullscreenQuality { }
-    public class ChildQuality : ViewModelQuality { }
-    public class MainChildQuality : ChildQuality { }
-    public class FullscreenQuality : ViewModelQuality { }
-    public class ModalQuality : ViewModelQuality { }
+    public interface IParentQuality : IViewModelQuality { }
+    public interface IChildQuality : IViewModelQuality { }
+    public interface IMainChildQuality : IChildQuality { }
+    public interface IModalQuality : IViewModelQuality { }
+    public interface IFullscreenQuality : IViewModelQuality { }
 }
