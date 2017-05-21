@@ -51,6 +51,7 @@
     <Compile Include="Messages\MenuToggleMessage.cs" />
     <Compile Include="Presenters\MasterDetailPresenter.cs" />
     <Compile Include="Presenters\StackPresenter.cs" />
+    <Compile Include="Presenters\TabbedPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Qualities\Qualities.cs" />
     <Compile Include="ViewModels\ViewObjects\NavigationStackDebuggerViewObject.cs" />

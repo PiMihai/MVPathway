@@ -8,9 +8,9 @@ namespace MVPathway.Integration.Tasks.Core
 {
     public class MessagingSubscriptionTask : CoreIntegrationTask
     {
-        private readonly IMessagingManager _messenger;
+        private readonly IMessenger _messenger;
 
-        public MessagingSubscriptionTask(IMessagingManager messenger)
+        public MessagingSubscriptionTask(IMessenger messenger)
         {
             _messenger = messenger;
         }

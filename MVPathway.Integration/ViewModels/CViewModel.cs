@@ -1,4 +1,5 @@
-﻿using MVPathway.Presenters.Abstractions;
+﻿using MVPathway.Navigation.Abstractions;
+using MVPathway.Presenters.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
 using Xamarin.Forms;
 
@@ -9,8 +10,8 @@ namespace MVPathway.Integration.ViewModels
         public override string Title => "C";
         public override Color Color => CColor;
 
-        public CViewModel(IPresenter presenter, NavigationStackDebuggerViewObject stackDebugger)
-            : base(presenter, stackDebugger)
+        public CViewModel(INavigator navigator, NavigationStackDebuggerViewObject stackDebugger)
+            : base(navigator, stackDebugger)
         {
         }
     }

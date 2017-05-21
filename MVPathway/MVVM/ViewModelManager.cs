@@ -75,5 +75,17 @@ namespace MVPathway.MVVM
             }
             return _map[viewModel];
         }
+
+        public List<Page> ResolvePagesForViewModels(Func<ViewModelDefinition, bool> definitionFilter)
+        {
+            return ResolveViewModelsByDefinition(definitionFilter)
+                .Select(vm => ResolvePageForViewModel(vm))
+                .ToList();
+        }
+
+        public List<Page> ResolvePagesForViewModels(List<BaseViewModel> viewModels)
+        {
+            return viewModels.Select(vm => ResolvePageForViewModel(vm)).ToList();
+        }
     }
 }

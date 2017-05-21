@@ -1,6 +1,7 @@
 ﻿using MVPathway.Messages;
 using MVPathway.Messages.Abstractions;
 using MVPathway.MVVM.Abstractions;
+using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters.Abstractions;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,10 +13,10 @@ namespace MVPathway.Utils.ViewModels.ViewObjects
         private IDiContainer _container;
 
         public ObservableCollection<string> NavigationStack =>
-            new ObservableCollection<string>(_container.Resolve<IPresenter>()
+            new ObservableCollection<string>(_container.Resolve<INavigator>()
                 .NavigationStack.Select(vm => vm.GetType().Name));
 
-        public NavigationStackDebuggerViewObject(IDiContainer container, IMessagingManager messenger)
+        public NavigationStackDebuggerViewObject(IDiContainer container, IMessenger messenger)
         {
             _container = container;
             messenger.Subscribe<NavigationStackUpdatedMessage>(

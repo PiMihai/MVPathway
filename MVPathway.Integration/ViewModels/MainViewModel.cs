@@ -7,12 +7,14 @@ using MVPathway.Integration.Converters;
 using Xamarin.Forms;
 using MVPathway.Presenters.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
+using MVPathway.Navigation.Abstractions;
 
 namespace MVPathway.Integration.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
         private readonly IDiContainer _container;
+        private readonly INavigator _navigator;
 
         private ObservableCollection<Type> _presenters;
         public ObservableCollection<Type> Presenters
@@ -52,18 +54,19 @@ namespace MVPathway.Integration.ViewModels
             _container.RegisterInstance(presenter);
             await (Application.Current as App).SetupWithPresenter(presenter);
             await presenter.Init();
-            await presenter.Show<MainViewModel>();
+            await _navigator.Show<MainViewModel>();
         }
 
         private Command _startCommand;
         public Command StartCommand => _startCommand ??
-            (_startCommand = new Command(() => _container.Resolve<IPresenter>().Show<AViewModel>()));
+            (_startCommand = new Command(() =>_navigator.Show<AViewModel>()));
 
         public NavigationStackDebuggerViewObject StackDebugger { get; private set; }
 
-        public MainViewModel(IDiContainer container, NavigationStackDebuggerViewObject stackDebugger)
+        public MainViewModel(IDiContainer container, INavigator navigator, NavigationStackDebuggerViewObject stackDebugger)
         {
             _container = container;
+            _navigator = navigator;
             StackDebugger = stackDebugger;
         }
 

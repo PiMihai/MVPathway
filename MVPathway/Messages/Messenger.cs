@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace MVPathway.Messages
 {
-    class MessagingManager : IMessagingManager
+    class Messenger : IMessenger
     {
         private readonly ILogger _logger;
 
-        private readonly Dictionary<Type, List<Delegate>> mCallbackMap
+        private readonly Dictionary<Type, List<Delegate>> _callbackMap
           = new Dictionary<Type, List<Delegate>>();
 
-        public MessagingManager(ILogger logger)
+        public Messenger(ILogger logger)
         {
             _logger = logger;
         }
@@ -21,11 +21,11 @@ namespace MVPathway.Messages
           where TMessage : IMessage
         {
             var messageType = typeof(TMessage);
-            if (!mCallbackMap.ContainsKey(messageType))
+            if (!_callbackMap.ContainsKey(messageType))
             {
-                mCallbackMap[messageType] = new List<Delegate>();
+                _callbackMap[messageType] = new List<Delegate>();
             }
-            var callbackList = mCallbackMap[messageType];
+            var callbackList = _callbackMap[messageType];
             if (callbackList.Contains(callback))
             {
                 return;
@@ -37,11 +37,11 @@ namespace MVPathway.Messages
           where TMessage : IMessage
         {
             var messageType = typeof(TMessage);
-            if (!mCallbackMap.ContainsKey(messageType))
+            if (!_callbackMap.ContainsKey(messageType))
             {
-                mCallbackMap[messageType] = new List<Delegate>();
+                _callbackMap[messageType] = new List<Delegate>();
             }
-            var callbackList = mCallbackMap[messageType];
+            var callbackList = _callbackMap[messageType];
             if (!callbackList.Contains(callback))
             {
                 return;
@@ -53,11 +53,11 @@ namespace MVPathway.Messages
           where TMessage : IMessage
         {
             var messageType = typeof(TMessage);
-            if (!mCallbackMap.ContainsKey(messageType))
+            if (!_callbackMap.ContainsKey(messageType))
             {
-                mCallbackMap[messageType] = new List<Delegate>();
+                _callbackMap[messageType] = new List<Delegate>();
             }
-            var callbackList = mCallbackMap[messageType].ToArray();
+            var callbackList = _callbackMap[messageType].ToArray();
             foreach (var callback in callbackList)
             {
                 callback.DynamicInvoke(message);

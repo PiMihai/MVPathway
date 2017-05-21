@@ -1,4 +1,5 @@
-﻿using MVPathway.Presenters.Abstractions;
+﻿using MVPathway.Navigation.Abstractions;
+using MVPathway.Presenters.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
 using Xamarin.Forms;
 
@@ -9,8 +10,8 @@ namespace MVPathway.Integration.ViewModels
         public override string Title => "E";
         public override Color Color => EColor;
 
-        public EViewModel(IPresenter presenter, NavigationStackDebuggerViewObject stackDebugger)
-            : base(presenter, stackDebugger)
+        public EViewModel(INavigator navigator, NavigationStackDebuggerViewObject stackDebugger)
+            : base(navigator, stackDebugger)
         {
         }
     }

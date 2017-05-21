@@ -1,8 +1,10 @@
-﻿using MVPathway.Logging.Abstractions;
-using MVPathway.Messages.Abstractions;
-using MVPathway.MVVM.Abstractions;
+﻿using MVPathway.MVVM.Abstractions;
+using MVPathway.Navigation;
+using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using static MVPathway.Helpers.MvpHelpers;
@@ -17,39 +19,66 @@ namespace MVPathway.Utils.Presenters
         private bool _isHandledPop;
         private TNavigationPage _navigationPage;
 
-        public StackPresenter(IDiContainer container,
-                              IViewModelManager viewModelManager,
-                              IMessagingManager messenger,
-                              ILogger logger)
-          : base(container, viewModelManager, messenger, logger)
+        public bool Animated { get; set; }
+
+        public StackPresenter(INavigationBus navigationBus) : base(navigationBus)
         {
         }
 
         public override async Task Init()
         {
-            await base.Init();
             _navigationPage = Activator.CreateInstance<TNavigationPage>();
             _navigationPage.Popped += async (sender, e) => await onNavigationPagePopped(sender, e);
         }
 
-        protected override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+        public override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
-            await _navigationPage.PushAsync(page);
-            if (Application.Current.MainPage != _navigationPage)
+            if (requestType == NavigationRequestType.FromClose)
             {
-                Application.Current.MainPage = _navigationPage;
+                if (!_navigationPage.Navigation.NavigationStack.Contains(page))
+                {
+                    await OnUiThread(async () =>
+                    {
+                        await _navigationPage.PushAsync(page, Animated);
+                        Application.Current.MainPage = _navigationPage;
+                    });
+                }
+                return;
             }
+
+            if (_navigationPage.Navigation.NavigationStack.Contains(page))
+            {
+                var tempStack = new Stack<Page>();
+                _isHandledPop = true;
+                while (_navigationPage.CurrentPage != page)
+                {
+                    tempStack.Push(await _navigationPage.PopAsync(false));
+                }
+                await _navigationPage.PopAsync(false);
+                _isHandledPop = false;
+                while (tempStack.Count > 0)
+                {
+                    await _navigationPage.PushAsync(tempStack.Pop(), false);
+                }
+            }
+            await _navigationPage.PushAsync(page, Animated);
+            Application.Current.MainPage = _navigationPage;
         }
 
-        protected override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+        public override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
-            if (Application.Current.MainPage != _navigationPage)
+            if (requestType != NavigationRequestType.FromClose)
             {
-                Application.Current.MainPage = _navigationPage;
+                return;
             }
-            _isHandledPop = true;
-            await _navigationPage.PopAsync();
-            _isHandledPop = false;
+
+            await OnUiThread(async () =>
+            {
+                _isHandledPop = true;
+                await _navigationPage.PopAsync(Animated);
+                _isHandledPop = false;
+                Application.Current.MainPage = _navigationPage;
+            });
         }
 
         public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
@@ -63,12 +92,10 @@ namespace MVPathway.Utils.Presenters
             {
                 return;
             }
-            var viewModel = e.Page.BindingContext as BaseViewModel;
-            if (viewModel == null)
+            NavigationBus.SendClose(this, new NavigationBusNavigateEventArgs
             {
-                return;
-            }
-            await Close();
+                RequestType = NavigationRequestType.FromClose
+            });
         }
     }
 }

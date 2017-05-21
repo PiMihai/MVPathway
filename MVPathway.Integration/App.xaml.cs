@@ -3,8 +3,6 @@ using MVPathway.Logging.Abstractions;
 using MVPathway.Messages.Abstractions;
 using MVPathway.Presenters.Abstractions;
 using Xamarin.Forms;
-using MVPathway.Integration.Services.Contracts;
-using MVPathway.Integration.Services;
 using MVPathway.Integration.ViewModels;
 using MVPathway.Integration.Pages;
 using MVPathway.Integration.Converters;
@@ -17,6 +15,7 @@ using MVPathway.Utils.ViewModels.Qualities;
 using MVPathway.Builder.Abstractions;
 using MVPathway.Utils.Builder;
 using System.Threading.Tasks;
+using MVPathway.Navigation.Abstractions;
 
 namespace MVPathway.Integration
 {
@@ -40,28 +39,30 @@ namespace MVPathway.Integration
 
         public override async void Init(IDiContainer container,
                                         IViewModelManager vmManager,
-                                        IMessagingManager messagingManager,
-                                        IPresenter presenter,
+                                        IMessenger messagingManager,
+                                        INavigator navigator,
                                         ILogger logger)
         {
             Container = container;
             _vmManager = vmManager;
 
-            container.Register<ITaskRunner, TaskRunner>();
+            //container.Register<ITaskRunner, TaskRunner>();
 
             var presenterConverter = Current.Resources["PresenterTypeListToStringConverter"] as PresenterTypeListToStringConverter;
             Current.Resources["PresenterTypeToStringConverter"] = presenterConverter.ForItem;
             presenterConverter.SupportedPresenters = new ObservableCollection<Type>{
                 typeof(SinglePagePresenter),
                 typeof(StackPresenter<NavigationPage>),
-                typeof(MasterDetailPresenter<MasterDetailPage>) };
+                typeof(MasterDetailPresenter<MasterDetailPage>),
+                typeof(TabbedPresenter<TabbedPage>)
+            };
 
             _vmDefs[typeof(MainViewModel)] = vmManager.RegisterPageForViewModel<MainViewModel, MainPage>()
                 .AddQuality<IParentQuality>();
 
-            await SetupWithPresenter(presenter);
+            await SetupWithPresenter(Container.Resolve<IPresenter>());
 
-            await presenter.Show<MainViewModel>();
+            await navigator.Show<MainViewModel>();
         }
 
         public async Task SetupWithPresenter(IPresenter presenter)
@@ -98,6 +99,17 @@ namespace MVPathway.Integration
 
                 _vmDefs[typeof(HViewModel)].AddQuality<IModalQuality>();
                 _vmDefs[typeof(HViewModel)].AddQuality<IFullscreenQuality>();
+            }
+            else if (presenter is TabbedPresenter<TabbedPage>)
+            {
+                _vmDefs[typeof(AViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(BViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(CViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(DViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(EViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(FViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(GViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(HViewModel)].AddQuality<IChildQuality>();
             }
         }
 

@@ -14,5 +14,7 @@ namespace MVPathway.MVVM.Abstractions
         Page ResolvePageForViewModel<TViewModel>() where TViewModel : BaseViewModel;
         Page ResolvePageForViewModel(Func<ViewModelDefinition, bool> definitionFilter);
         Page ResolvePageForViewModel(BaseViewModel viewModel);
+        List<Page> ResolvePagesForViewModels(Func<ViewModelDefinition, bool> definitionFilter);
+        List<Page> ResolvePagesForViewModels(List<BaseViewModel> viewModels);
     }
 }

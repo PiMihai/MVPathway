@@ -1,34 +1,28 @@
-﻿using MVPathway.Logging.Abstractions;
-using MVPathway.Messages.Abstractions;
-using MVPathway.MVVM.Abstractions;
+﻿using MVPathway.MVVM.Abstractions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using static MVPathway.Helpers.MvpHelpers;
+using MVPathway.Navigation.Abstractions;
 
 namespace MVPathway.Presenters
 {
     public class SinglePagePresenter : BasePresenter
     {
-        public SinglePagePresenter(IDiContainer container,
-                                   IViewModelManager viewModelManager,
-                                   IMessagingManager messenger,
-                                   ILogger logger)
-          : base(container, viewModelManager, messenger, logger)
+        public SinglePagePresenter(INavigationBus navigationBus) : base(navigationBus)
         {
         }
 
         public override async Task Init()
         {
-            await base.Init();
-            Application.Current.MainPage = new ContentPage();
+            await OnUiThread(() => Application.Current.MainPage = new ContentPage());
         }
 
-        protected override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+        public override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
             await OnUiThread(() => Application.Current.MainPage = page);
         }
 
-        protected override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+        public override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
         }
 

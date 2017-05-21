@@ -1,4 +1,5 @@
-﻿using MVPathway.Presenters.Abstractions;
+﻿using MVPathway.Navigation.Abstractions;
+using MVPathway.Presenters.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
 using Xamarin.Forms;
 
@@ -9,8 +10,8 @@ namespace MVPathway.Integration.ViewModels
         public override string Title => "H";
         public override Color Color => HColor;
 
-        public HViewModel(IPresenter presenter, NavigationStackDebuggerViewObject stackDebugger)
-            : base(presenter, stackDebugger)
+        public HViewModel(INavigator navigator, NavigationStackDebuggerViewObject stackDebugger)
+            : base(navigator, stackDebugger)
         {
         }
     }

@@ -2,7 +2,7 @@
 
 namespace MVPathway.Messages.Abstractions
 {
-  public interface IMessagingManager
+  public interface IMessenger
   {
     void Send<TMessage>(TMessage message) where TMessage : IMessage;
     void Subscribe<TMessage>(Action<TMessage> callback) where TMessage : IMessage;

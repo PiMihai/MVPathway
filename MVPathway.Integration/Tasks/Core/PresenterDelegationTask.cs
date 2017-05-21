@@ -14,7 +14,7 @@ namespace MVPathway.Integration.Tasks.Core
     {
         private readonly IDiContainer _container;
         private readonly IViewModelManager _viewModelManager;
-        private IPresenter _presenter;
+        private INavigator _navigator;
 
         public PresenterDelegationTask(IDiContainer container, IViewModelManager viewModelManager)
         {
@@ -24,8 +24,8 @@ namespace MVPathway.Integration.Tasks.Core
 
         public override async Task<bool> Execute()
         {
-            _presenter = _container.Resolve<IPresenter>();
-            _presenter.Init();
+            _navigator = _container.Resolve<INavigator>();
+            _navigator.Init();
             const string cPageException = "Cannot create page";
 
             try
@@ -38,12 +38,12 @@ namespace MVPathway.Integration.Tasks.Core
             }
             catch (Exception e) when (e.Message.StartsWith(cPageException)) { }
 
-            var first = await _presenter.Show<FirstViewModel>();
+            var first = await _navigator.Show<FirstViewModel>();
             if (first == null || !first.NavTo)
             {
                 return false;
             }
-            var second = await _presenter.Show(
+            var second = await _navigator.Show(
               def => def.HasQuality<MyQuality>()) as SecondViewModel;
             if (second == null || !second.NavTo)
             {
@@ -51,13 +51,13 @@ namespace MVPathway.Integration.Tasks.Core
             }
 
             // close 2nd, returning prev (1st) vm
-            first = await _presenter.Close() as FirstViewModel;
+            first = await _navigator.Close() as FirstViewModel;
             if (second == null || !second.NavFrom)
             {
                 return false;
             }
             // try closing 1st, should return null as 1st is root
-            first = await _presenter.Close() as FirstViewModel;
+            first = await _navigator.Close() as FirstViewModel;
 
             return first == null;
 

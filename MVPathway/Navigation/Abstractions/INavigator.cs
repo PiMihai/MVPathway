@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MVPathway.Presenters.Abstractions
+namespace MVPathway.Navigation.Abstractions
 {
-    public interface IPresenter
+    public interface INavigator
     {
         Stack<BaseViewModel> NavigationStack { get; }
-
-        Task Init();
 
         Task<TViewModel> Show<TViewModel>(object parameter = null) where TViewModel : BaseViewModel;
         Task<BaseViewModel> Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null);
@@ -23,6 +21,6 @@ namespace MVPathway.Presenters.Abstractions
 
         Task<BaseViewModel> Close(object parameter = null);
 
-        Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null);
+        void DisplayAlertAsync(string title, string message, string okText, string cancelText = null);
     }
 }

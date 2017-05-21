@@ -75,33 +75,7 @@
     <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\Contracts\ITaskRunner.cs" />
-    <Compile Include="Services\TaskRunner.cs" />
-    <Compile Include="Tasks\Messages\TestMessage.cs" />
-    <Compile Include="Tasks\Pages\FirstPage.xaml.cs">
-      <DependentUpon>FirstPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tasks\Pages\SecondPage.xaml.cs">
-      <DependentUpon>SecondPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasks\Services\Contracts\IService.cs" />
-    <Compile Include="Tasks\Services\MyService.cs" />
-    <Compile Include="Tasks\Base\BaseIntegrationTask.cs" />
-    <Compile Include="Tasks\Base\CoreIntegrationTask.cs" />
-    <Compile Include="Tasks\Base\IIntegrationTask.cs" />
-    <Compile Include="Tasks\Base\UtilsIntegrationTask.cs" />
-    <Compile Include="Tasks\Core\MessagingSubscriptionTask.cs" />
-    <Compile Include="Tasks\Core\PageResolutionTask.cs" />
-    <Compile Include="Tasks\Core\PresenterDelegationTask.cs" />
-    <Compile Include="Tasks\Core\ResultResolutionTask.cs" />
-    <Compile Include="Tasks\Core\ServiceResolutionTask.cs" />
-    <Compile Include="Tasks\Utils\ConverterTask.cs" />
-    <Compile Include="Tasks\ViewModels\FirstViewModel.cs" />
-    <Compile Include="Tasks\ViewModels\FlagViewModel.cs" />
-    <Compile Include="Tasks\ViewModels\OkResultViewModel.cs" />
-    <Compile Include="Tasks\ViewModels\Qualities\MyQuality.cs" />
-    <Compile Include="Tasks\ViewModels\SecondViewModel.cs" />
     <Compile Include="ViewModels\AViewModel.cs" />
     <Compile Include="ViewModels\BViewModel.cs" />
     <Compile Include="ViewModels\CViewModel.cs" />
@@ -121,18 +95,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tasks\Pages\FirstPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tasks\Pages\SecondPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\APage.xaml">

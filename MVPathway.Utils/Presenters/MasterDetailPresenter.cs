@@ -1,6 +1,7 @@
-﻿using MVPathway.Logging.Abstractions;
-using MVPathway.Messages.Abstractions;
+﻿using MVPathway.Messages.Abstractions;
 using MVPathway.MVVM.Abstractions;
+using MVPathway.Navigation;
+using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters;
 using MVPathway.Utils.Messages;
 using MVPathway.Utils.ViewModels.Qualities;
@@ -20,6 +21,8 @@ namespace MVPathway.Utils.Presenters
         private const string EXCEPTION_PARENT_NOT_SHOWN_BEFORE_MODAL = "Cannot show ModalViewModel, please show the ParentViewModel first.";
         private const string EXCEPTION_VM_NOT_TAGGED = "Unknown ViewModel type. When using the MasterDetailPresenter, you must tag all your MVPathway ViewModels with either IParentViewModel, IMainChildViewModel, IChildViewModel or IModalViewModel.";
 
+        private readonly IMessenger _messenger;
+        private readonly IViewModelManager _vmManager;
         private readonly Dictionary<Page, NavigationPage> _cachedChildren = new Dictionary<Page, NavigationPage>();
 
         private TMasterDetailPage _masterDetailPage;
@@ -30,33 +33,34 @@ namespace MVPathway.Utils.Presenters
 
         public MasterBehavior MenuBehaviour { get; set; } = MasterBehavior.Popover;
 
-        public MasterDetailPresenter(IViewModelManager vmManager,
-                                     IMessagingManager messenger,
-                                     IDiContainer container,
-                                     ILogger logger)
-            : base(container, vmManager, messenger, logger)
+        public MasterDetailPresenter(IMessenger messenger, IViewModelManager vmManager, INavigationBus navigationBus)
+            : base(navigationBus)
         {
+            _messenger = messenger;
+            _vmManager = vmManager;
         }
 
         public override async Task Init()
         {
-            await base.Init();
             _masterDetailPage = Activator.CreateInstance<TMasterDetailPage>();
             _masterDetailPage.MasterBehavior = MenuBehaviour;
-            Messenger.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);
+            _messenger.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);
         }
 
-        protected override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+        public override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
             if (viewModel.Definition.HasQuality<IChildQuality>())
             {
                 // clean stack of any modal VMs
                 while (_navigationPage != null && _navigationPage.Navigation.NavigationStack.Count > 1)
                 {
-                    await Close();
+                    NavigationBus.SendClose(this, new NavigationBusNavigateEventArgs
+                    {
+                        RequestType = NavigationRequestType.FromShow
+                    });
                 }
             }
-            
+
             if (viewModel.Definition.HasQuality<IParentQuality>()) // AICI AICI AICI
             {
                 if (string.IsNullOrEmpty(page.Title))
@@ -66,8 +70,12 @@ namespace MVPathway.Utils.Presenters
                 _masterDetailPage.Master = page;
                 try
                 {
-                    var mainChildVm = VmManager.ResolveViewModelByDefinition(def => def.HasQuality<IMainChildQuality>());
-                    await Show(mainChildVm, null);
+                    var mainChildVm = _vmManager.ResolveViewModelByDefinition(def => def.HasQuality<IMainChildQuality>());
+                    NavigationBus.SendShow(this, new NavigationBusNavigateEventArgs
+                    {
+                        ViewModel = mainChildVm,
+                        RequestType = NavigationRequestType.FromShow
+                    });
                     Application.Current.MainPage = _masterDetailPage;
                 }
                 catch (Exception ex)
@@ -121,7 +129,7 @@ namespace MVPathway.Utils.Presenters
             }
         }
 
-        protected override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+        public override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
         {
             if (viewModel.Definition.HasQuality<IModalQuality>())
             {
@@ -152,7 +160,10 @@ namespace MVPathway.Utils.Presenters
             {
                 return;
             }
-            await Close();
+            NavigationBus.SendClose(this, new NavigationBusNavigateEventArgs
+            {
+                RequestType = NavigationRequestType.FromClose
+            });
         }
 
         private void onCloseDrawerMessage(MenuToggleMessage message)
