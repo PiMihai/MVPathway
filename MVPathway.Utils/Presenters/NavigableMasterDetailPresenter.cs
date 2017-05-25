@@ -76,6 +76,7 @@ namespace MVPathway.Utils.Presenters
                     }
                     _masterDetailPage = Activator.CreateInstance<TMasterDetailPage>();
                     _masterDetailPage.MasterBehavior = MenuBehaviour;
+                    _masterDetailPage.IsGestureEnabled = false;
                     _masterDetailPage.Master = page;
                 }
                 try
