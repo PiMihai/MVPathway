@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using MVPathway.Integration.Converters;
 using Xamarin.Forms;
-using MVPathway.Presenters.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
 using MVPathway.Navigation.Abstractions;
 
@@ -13,8 +12,8 @@ namespace MVPathway.Integration.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private readonly IDiContainer _container;
         private readonly INavigator _navigator;
+        private readonly INavigationBus _navigationBus;
 
         private ObservableCollection<Type> _presenters;
         public ObservableCollection<Type> Presenters
@@ -39,21 +38,18 @@ namespace MVPathway.Integration.ViewModels
                 }
                 _selectedPresenter = value;
                 OnPropertyChanged();
-                _container.Register(value);
-                var instance = _container.Resolve(value) as IPresenter;
-                ChangePresenterCommand.Execute(instance);
+                ChangePresenterCommand.Execute(value);
             }
         }
 
-        private Command<IPresenter> _changePresenterCommand;
-        public Command<IPresenter> ChangePresenterCommand => _changePresenterCommand ?? (_changePresenterCommand = new Command<IPresenter>(
+        private Command<Type> _changePresenterCommand;
+        public Command<Type> ChangePresenterCommand => _changePresenterCommand ?? (_changePresenterCommand = new Command<Type>(
             async (p) => await changePresenter(p)));
 
-        private async Task changePresenter(IPresenter presenter)
+        private async Task changePresenter(Type presenterType)
         {
-            _container.RegisterInstance(presenter);
-            await (Application.Current as App).SetupWithPresenter(presenter);
-            await presenter.Init();
+            await ((App)Application.Current).SetupWithPresenterType(presenterType);
+            await _navigationBus.ChangePresenterTo(presenterType);
             await _navigator.Show<MainViewModel>();
         }
 
@@ -63,10 +59,10 @@ namespace MVPathway.Integration.ViewModels
 
         public NavigationStackDebuggerViewObject StackDebugger { get; private set; }
 
-        public MainViewModel(IDiContainer container, INavigator navigator, NavigationStackDebuggerViewObject stackDebugger)
+        public MainViewModel(INavigator navigator, INavigationBus navigationBus, NavigationStackDebuggerViewObject stackDebugger)
         {
-            _container = container;
             _navigator = navigator;
+            _navigationBus = navigationBus;
             StackDebugger = stackDebugger;
         }
 

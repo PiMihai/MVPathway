@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mvpuv="clr-namespace:MVPathway.Utils.Views;assembly=MVPathway.Utils"
              x:Class="MVPathway.Integration.Pages.MainPage"
-             BackgroundColor="Black">
+             BackgroundColor="Black"
+             Title="Main Page">
     <StackLayout Orientation="Vertical">
         <Label Text="Select presenter"
                TextColor="White"

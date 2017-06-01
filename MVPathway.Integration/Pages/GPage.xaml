@@ -3,4 +3,5 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MVPathway.Integration.Pages.GPage"
              BackgroundColor="Black"
+             Title="G Page"
              ControlTemplate="{StaticResource PageTemplate}"/>

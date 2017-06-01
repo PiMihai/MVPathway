@@ -14,6 +14,7 @@ namespace MVPathway.Presenters
 
         public override async Task Init()
         {
+            await base.Init();
             await OnUiThread(() => Application.Current.MainPage = new ContentPage());
         }
 

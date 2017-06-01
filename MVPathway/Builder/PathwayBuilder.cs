@@ -50,7 +50,7 @@ namespace MVPathway.Builder
             where TPresenter : class, IPresenter
         {
             ensureDiContainerLoaded();
-            Container.Register<IPresenter, TPresenter>();
+            Container.Resolve<INavigationBus>().ChangePresenterTo<TPresenter>();
             ConfigurePresenter = p => configure?.Invoke(p as TPresenter);
 
             return this;

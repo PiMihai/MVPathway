@@ -3,4 +3,5 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MVPathway.Integration.Pages.EPage"
              BackgroundColor="Black"
+             Title="E Page"
              ControlTemplate="{StaticResource PageTemplate}"/>

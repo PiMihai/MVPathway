@@ -42,6 +42,7 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task Init()
         {
+            await base.Init();
             _masterDetailPage = Activator.CreateInstance<TMasterDetailPage>();
             _masterDetailPage.MasterBehavior = MenuBehaviour;
             _messenger.Subscribe<MenuToggleMessage>(onCloseDrawerMessage);

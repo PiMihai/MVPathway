@@ -8,6 +8,8 @@ namespace MVPathway.Presenters.Abstractions
     {
         Task Init();
 
+        Task Destroy();
+
         Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType);
 
         Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType);

@@ -19,7 +19,6 @@ namespace MVPathway.Builder
             platformSetup?.Invoke(builder.Container);
             var presenter = builder.Container.Resolve<IPresenter>();
             builder.ConfigurePresenter?.Invoke(presenter);
-            presenter.Init();
             app.Init(builder.Container,
                               builder.Container.Resolve<IViewModelManager>(),
                               builder.Container.Resolve<IMessenger>(),

@@ -32,11 +32,11 @@ namespace MVPathway.MVVM
 
         public Stack<BaseViewModel> NavigationStack { get; private set; } = new Stack<BaseViewModel>();
 
-        protected Navigator(IDiContainer container,
-                            IViewModelManager viewModelManager,
-                            INavigationBus navigationBus,
-                            IMessenger messenger,
-                            ILogger logger)
+        public Navigator(IDiContainer container,
+                         IViewModelManager viewModelManager,
+                         INavigationBus navigationBus,
+                         IMessenger messenger,
+                         ILogger logger)
         {
             _container = container;
             _vmManager = viewModelManager;
@@ -44,6 +44,7 @@ namespace MVPathway.MVVM
             _messenger = messenger;
             _logger = logger;
 
+            _navigationBus.NavigationStackCleared += () => NavigationStack.Clear();
             _navigationBus.ShowRequested += async (s, e) =>
             {
                 if (!(s is IPresenter) || e.ViewModel == null)

@@ -14,7 +14,6 @@ namespace MVPathway.Utils.Presenters
         where TTabbedPage : TabbedPage
     {
         private readonly IViewModelManager _vmManager;
-        private readonly INavigationBus _navigationBus;
 
         private bool _isHandledPop;
         private bool _isHandledTabChange;
@@ -29,17 +28,22 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task Init()
         {
+            await base.Init();
+            _isHandledTabChange = true;
             _navigationPage = new NavigationPage();
+            _navigationPage.Popped += onPagePopped;
             _tabbedPage = Activator.CreateInstance<TTabbedPage>();
-            _tabbedPage.CurrentPageChanged += async (s, e) => await onTabChanged(s, e);
+            _tabbedPage.CurrentPageChanged += onTabChanged;
             var childPages = _vmManager.ResolvePagesForViewModels(def => def.HasQuality<IChildQuality>());
             foreach (var child in childPages)
             {
                 _tabbedPage.Children.Add(child);
+                NavigationPage.SetHasNavigationBar(child, true);
             }
             await _navigationPage.PushAsync(_tabbedPage);
             NavigationPage.SetHasNavigationBar(_tabbedPage, false);
             await OnUiThread(() => Application.Current.MainPage = _navigationPage);
+            _isHandledTabChange = false;
         }
 
         public override async Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
@@ -58,7 +62,7 @@ namespace MVPathway.Utils.Presenters
                     }
                 }
                 _isHandledTabChange = true;
-                _tabbedPage.SelectedItem = page;
+                _tabbedPage.CurrentPage = page;
                 _isHandledTabChange = false;
             }
             else
@@ -93,13 +97,31 @@ namespace MVPathway.Utils.Presenters
             return await _navigationPage.DisplayAlert(title, message, okText, cancelText);
         }
 
-        private async Task onTabChanged(object sender, EventArgs e)
+        private void onTabChanged(object sender, EventArgs e)
         {
             if (_isHandledTabChange)
             {
                 return;
             }
-            _navigationBus.SendClose(this, new Navigation.NavigationBusNavigateEventArgs
+            var newVm = _tabbedPage.CurrentPage.BindingContext as BaseViewModel;
+            if(newVm == null)
+            {
+                return;
+            }
+            NavigationBus.SendShow(this, new Navigation.NavigationBusNavigateEventArgs
+            {
+                ViewModel = newVm,
+                RequestType = NavigationRequestType.FromShow
+            });
+        }
+
+        private void onPagePopped(object sender, EventArgs e)
+        {
+            if (_isHandledPop)
+            {
+                return;
+            }
+            NavigationBus.SendClose(this, new Navigation.NavigationBusNavigateEventArgs
             {
                 RequestType = NavigationRequestType.FromClose
             });

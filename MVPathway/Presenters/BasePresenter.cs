@@ -3,6 +3,7 @@ using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters.Abstractions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using MVPathway.Navigation;
 
 namespace MVPathway.Presenters
 {
@@ -13,30 +14,42 @@ namespace MVPathway.Presenters
         public BasePresenter(INavigationBus navigationBus)
         {
             NavigationBus = navigationBus;
-            navigationBus.ShowRequested += (s, e) =>
-            {
-                if (!(s is INavigator))
-                {
-                    return;
-                }
-                OnShow(e.ViewModel, e.Page, e.RequestType);
-            };
-            navigationBus.CloseRequested += (s, e) =>
-            {
-                if (!(s is INavigator))
-                {
-                    return;
-                }
-                OnClose(e.ViewModel, e.Page, e.RequestType);
-            };
         }
 
         public abstract Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null);
 
-        public abstract Task Init();
+        public virtual async Task Init()
+        {
+            NavigationBus.ShowRequested += onShowRequested;
+            NavigationBus.CloseRequested += onCloseRequested;
+        }
 
         public abstract Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType);
 
         public abstract Task OnShow(BaseViewModel viewModel, Page page, NavigationRequestType requestType);
+
+        public virtual async Task Destroy()
+        {
+            NavigationBus.ShowRequested -= onShowRequested;
+            NavigationBus.CloseRequested -= onCloseRequested;
+        }
+
+        private void onShowRequested(object sender, NavigationBusNavigateEventArgs e)
+        {
+            if (!(sender is INavigator))
+            {
+                return;
+            }
+            OnShow(e.ViewModel, e.Page, e.RequestType);
+        }
+
+        private void onCloseRequested(object sender, NavigationBusNavigateEventArgs e)
+        {
+            if (!(sender is INavigator))
+            {
+                return;
+            }
+            OnClose(e.ViewModel, e.Page, e.RequestType);
+        }
     }
 }

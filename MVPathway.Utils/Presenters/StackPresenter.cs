@@ -27,6 +27,7 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task Init()
         {
+            await base.Init();
             _navigationPage = Activator.CreateInstance<TNavigationPage>();
             _navigationPage.Popped += async (sender, e) => await onNavigationPagePopped(sender, e);
         }

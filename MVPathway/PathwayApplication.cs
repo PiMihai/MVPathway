@@ -17,11 +17,11 @@ namespace MVPathway
         public virtual void Configure(IPathwayBuilder builder)
         {
             builder.UseDiContainer<DiContainer>()
+                   .UseNavigationBus<NavigationBus>()
                    .UseViewModelManager<ViewModelManager>()
-                   .UsePresenter<SinglePagePresenter>()
                    .UseMessagingManager<Messenger>()
                    .UseLogger<PathwayLogger>()
-                   .UseNavigationBus<NavigationBus>()
+                   .UsePresenter<SinglePagePresenter>()
                    .UseNavigator<Navigator>();
         }
 

@@ -19,7 +19,7 @@ using MVPathway.Navigation.Abstractions;
 
 namespace MVPathway.Integration
 {
-    public partial class App
+    public partial class App : PathwayApplication
     {
         private IViewModelManager _vmManager;
         private Dictionary<Type, ViewModelDefinition> _vmDefs = new Dictionary<Type, ViewModelDefinition>();
@@ -59,16 +59,6 @@ namespace MVPathway.Integration
 
             _vmDefs[typeof(MainViewModel)] = vmManager.RegisterPageForViewModel<MainViewModel, MainPage>()
                 .AddQuality<IParentQuality>();
-
-            await SetupWithPresenter(Container.Resolve<IPresenter>());
-
-            await navigator.Show<MainViewModel>();
-        }
-
-        public async Task SetupWithPresenter(IPresenter presenter)
-        {
-            await ensureNoPageHasParent();
-
             _vmDefs[typeof(AViewModel)] = _vmManager.RegisterPageForViewModel<AViewModel, APage>();
             _vmDefs[typeof(BViewModel)] = _vmManager.RegisterPageForViewModel<BViewModel, BPage>();
             _vmDefs[typeof(CViewModel)] = _vmManager.RegisterPageForViewModel<CViewModel, CPage>();
@@ -78,7 +68,16 @@ namespace MVPathway.Integration
             _vmDefs[typeof(GViewModel)] = _vmManager.RegisterPageForViewModel<GViewModel, GPage>();
             _vmDefs[typeof(HViewModel)] = _vmManager.RegisterPageForViewModel<HViewModel, HPage>();
 
-            if (presenter is MasterDetailPresenter<MasterDetailPage>)
+            await SetupWithPresenterType(typeof(SinglePagePresenter));
+
+            await navigator.Show<MainViewModel>();
+        }
+
+        public async Task SetupWithPresenterType(Type presenterType)
+        {
+            await ensureNoPageHasParent();
+
+            if (presenterType == typeof(MasterDetailPresenter<MasterDetailPage>))
             {
                 _vmDefs[typeof(AViewModel)].AddQuality<IMainChildQuality>();
 
@@ -100,16 +99,16 @@ namespace MVPathway.Integration
                 _vmDefs[typeof(HViewModel)].AddQuality<IModalQuality>();
                 _vmDefs[typeof(HViewModel)].AddQuality<IFullscreenQuality>();
             }
-            else if (presenter is TabbedPresenter<TabbedPage>)
+            else if (presenterType == typeof(TabbedPresenter<TabbedPage>))
             {
                 _vmDefs[typeof(AViewModel)].AddQuality<IChildQuality>();
                 _vmDefs[typeof(BViewModel)].AddQuality<IChildQuality>();
                 _vmDefs[typeof(CViewModel)].AddQuality<IChildQuality>();
                 _vmDefs[typeof(DViewModel)].AddQuality<IChildQuality>();
-                _vmDefs[typeof(EViewModel)].AddQuality<IChildQuality>();
-                _vmDefs[typeof(FViewModel)].AddQuality<IChildQuality>();
-                _vmDefs[typeof(GViewModel)].AddQuality<IChildQuality>();
-                _vmDefs[typeof(HViewModel)].AddQuality<IChildQuality>();
+                _vmDefs[typeof(EViewModel)].AddQuality<IModalQuality>();
+                _vmDefs[typeof(FViewModel)].AddQuality<IModalQuality>();
+                _vmDefs[typeof(GViewModel)].AddQuality<IModalQuality>();
+                _vmDefs[typeof(HViewModel)].AddQuality<IModalQuality>();
             }
         }
 
