@@ -1,22 +1,16 @@
-﻿using System.Resources;
-using System.Reflection;
-using Xamarin.Forms.Xaml;
+﻿using System.Reflection;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
-
 [assembly: AssemblyTitle("MVPathway.Utils")]
 [assembly: AssemblyDescription("Utility package for MVPathway")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mihai Pirvu")]
 [assembly: AssemblyProduct("MVPathway.Utils")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright © 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: NeutralResourcesLanguage("en")]
 
 // Version information for an assembly consists of the following four values:
 //
