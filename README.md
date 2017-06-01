@@ -1,13 +1,17 @@
 ﻿![MVPathway Icon](https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png)
 # MVPathway
 
-[![Build status](https://ci.appveyor.com/api/projects/status/6vkugaj5m0943bj4/branch/master?svg=true&passingText=master&failingText=master)](https://ci.appveyor.com/project/UizzUW/mvpathway-9jihh/branch/master)
-[![Build status](https://ci.appveyor.com/api/projects/status/6vkugaj5m0943bj4/branch/dev?svg=true&passingText=dev&failingText=dev)](https://ci.appveyor.com/project/UizzUW/mvpathway-9jihh/branch/dev)
+Master | Dev
+--- | ---
+![Master status](https://uizz.visualstudio.com/_apis/public/build/definitions/69b85183-89fb-4074-a328-40814ac176f4/4/badge) | ![Dev status](https://uizz.visualstudio.com/_apis/public/build/definitions/69b85183-89fb-4074-a328-40814ac176f4/3/badge)
 
 Lightweight MVVMP Framework for Xamarin Forms
 
-## Available on NuGet
+## Official version available on NuGet
 
 `Install-Package MVPathway`
-
 `Install-Package MVPathway.Utils`
+
+## Dev version available on MyGet
+
+`https://www.myget.org/F/uizz-experimental/api/v3/index.json`
