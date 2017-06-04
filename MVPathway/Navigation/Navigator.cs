@@ -1,16 +1,15 @@
-﻿using MVPathway.Logging.Abstractions;
-using MVPathway.Messages;
-using MVPathway.Messages.Abstractions;
-using MVPathway.MVVM.Abstractions;
-using MVPathway.Navigation;
+﻿using System;
 using MVPathway.Navigation.Abstractions;
-using MVPathway.Presenters;
 using MVPathway.Presenters.Abstractions;
-using System;
-using System.Collections.Generic;
+using MVPathway.MVVM.Abstractions;
 using System.Threading.Tasks;
+using MVPathway.MVVM;
+using MVPathway.Messages.Abstractions;
+using MVPathway.Logging.Abstractions;
+using System.Collections.Generic;
+using MVPathway.Messages;
 
-namespace MVPathway.MVVM
+namespace MVPathway.Navigation
 {
     public class Navigator : INavigator
     {
@@ -25,46 +24,55 @@ namespace MVPathway.MVVM
         private string INFO_ON_NAVIGATING_FROM(Type viewModelType) => $"{viewModelType.Name} OnNavigatingFrom called.";
 
         private readonly IDiContainer _container;
-        private readonly IViewModelManager _vmManager;
-        private readonly INavigationBus _navigationBus;
-        private readonly IMessenger _messenger;
         private readonly ILogger _logger;
+        private readonly IViewModelManager _vmManager;
+        private readonly IMessenger _messenger;
 
-        public Stack<BaseViewModel> NavigationStack { get; private set; } = new Stack<BaseViewModel>();
+        private Stack<BaseViewModel> _navigationStack = new Stack<BaseViewModel>();
 
         public Navigator(IDiContainer container,
-                         IViewModelManager viewModelManager,
-                         INavigationBus navigationBus,
-                         IMessenger messenger,
-                         ILogger logger)
+                         ILogger logger,
+                         IViewModelManager vmManager,
+                         IMessenger messenger)
         {
             _container = container;
-            _vmManager = viewModelManager;
-            _navigationBus = navigationBus;
-            _messenger = messenger;
             _logger = logger;
+            _vmManager = vmManager;
+            _messenger = messenger;
+        }
 
-            _navigationBus.NavigationStackCleared += () => NavigationStack.Clear();
-            _navigationBus.ShowRequested += async (s, e) =>
+        public async Task ChangePresenter<TPresenter>()
+            where TPresenter : IPresenter
+        {
+            await ChangePresenter(typeof(TPresenter));
+        }
+
+        public async Task ChangePresenter(Type presenterType)
+        {
+            var auxStack = new Stack<BaseViewModel>();
+            while (_navigationStack.Count > 0)
             {
-                if (!(s is IPresenter) || e.ViewModel == null)
+                var viewModel = _navigationStack.Pop();
+                auxStack.Push(viewModel);
+                _messenger.Send(new NavigationStackUpdatedMessage
                 {
-                    return;
-                }
-                await Show(e.ViewModel);
-            };
-            _navigationBus.CloseRequested += async (s, e) =>
+                    ViewModel = viewModel,
+                    WasPopped = true
+                });
+            }
+            _container.Register(presenterType);
+            var instance = _container.Resolve(presenterType) as IPresenter;
+            _container.RegisterInstance(instance);
+            await instance.Init();
+            while (auxStack.Count > 0)
             {
-                if (!(s is IPresenter))
-                {
-                    return;
-                }
-                await Close();
-            };
+                var nextVmToPush = auxStack.Pop();
+                await Show(nextVmToPush);
+            }
         }
 
         public async Task<TViewModel> Show<TViewModel>(object parameter = null)
-          where TViewModel : BaseViewModel
+                  where TViewModel : BaseViewModel
         {
             var viewModel = _container.Resolve<TViewModel>();
             return await Show(viewModel, parameter) as TViewModel;
@@ -78,46 +86,46 @@ namespace MVPathway.MVVM
 
         public async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter = null)
         {
+            var presenter = _container.Resolve<IPresenter>();
+
             if (viewModel == null)
             {
                 throw new ArgumentNullException(EXCEPTION_NULL_VM_INSTANCE);
             }
 
             var viewModelType = viewModel.GetType();
-            if (NavigationStack.Count > 0)
+            if (_navigationStack.Count > 0)
             {
-                if (NavigationStack.Peek().GetType().Name == viewModelType.Name)
+                if (_navigationStack.Peek().GetType().Name == viewModelType.Name)
                 {
                     _logger.LogWarning(WARNING_VM_ALREADY_SHOWN(viewModelType));
                     return null;
                 }
                 // actual UI work
-                var closeEvent = new NavigationBusNavigateEventArgs
-                {
-                    ViewModel = NavigationStack.Peek(),
-                    Page = _vmManager.ResolvePageForViewModel(NavigationStack.Peek()),
-                    RequestType = NavigationRequestType.FromShow
-                };
-                _navigationBus.SendClose(this, closeEvent);
-                await callOnNavigatingFrom(NavigationStack.Peek(), null);
+                await presenter.OnClose(_navigationStack.Peek(),
+                    _vmManager.ResolvePageForViewModel(_navigationStack.Peek()),
+                    NavigationRequestType.FromShow);
+
+                await callOnNavigatingFrom(_navigationStack.Peek(), null);
             }
-            NavigationStack.Push(viewModel);
-            _messenger.Send(new NavigationStackUpdatedMessage());
+            _navigationStack.Push(viewModel);
+            _messenger.Send(new NavigationStackUpdatedMessage
+            {
+                ViewModel = viewModel
+            });
 
             // actual UI work
-            var showEvent = new NavigationBusNavigateEventArgs
-            {
-                ViewModel = viewModel,
-                Page = _vmManager.ResolvePageForViewModel(viewModel),
-                RequestType = NavigationRequestType.FromShow
-            };
-            _navigationBus.SendShow(this, showEvent);
+            await presenter.OnShow(viewModel,
+                _vmManager.ResolvePageForViewModel(viewModel),
+                NavigationRequestType.FromShow);
+
             await callOnNavigatedTo(viewModel, parameter);
             return viewModel;
         }
 
+
         public async Task<ViewModelResult<TResult>> GetResult<TViewModel, TResult>(object parameter = null)
-          where TViewModel : BaseResultViewModel<TResult>
+            where TViewModel : BaseResultViewModel<TResult>
         {
             var viewModel = _container.Resolve<TViewModel>();
             return await GetResult(viewModel, parameter);
@@ -131,6 +139,8 @@ namespace MVPathway.MVVM
 
         public async Task<ViewModelResult<TResult>> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null)
         {
+            var presenter = _container.Resolve<IPresenter>();
+
             if (viewModel == null)
             {
                 throw new ArgumentNullException(EXCEPTION_NULL_VM_INSTANCE);
@@ -145,53 +155,50 @@ namespace MVPathway.MVVM
 
         public async Task<BaseViewModel> Close(object parameter = null)
         {
-            if (NavigationStack.Count == 0)
+            var presenter = _container.Resolve<IPresenter>();
+
+            if (_navigationStack.Count == 0)
             {
                 throw new InvalidOperationException(ERROR_VM_STACK_EMPTY);
             }
-            if (NavigationStack.Count == 1)
+            if (_navigationStack.Count == 1)
             {
                 _logger.LogWarning(WARNING_VM_STACK_ROOT_REACHED);
                 return null;
             }
-            var currentViewModel = NavigationStack.Pop();
-            _messenger.Send(new NavigationStackUpdatedMessage());
+            var currentViewModel = _navigationStack.Pop();
+            _messenger.Send(new NavigationStackUpdatedMessage
+            {
+                WasPopped = true,
+                ViewModel = currentViewModel
+            });
 
             // actual UI work
-            var closeEvent = new NavigationBusNavigateEventArgs
-            {
-                ViewModel = currentViewModel,
-                Page = _vmManager.ResolvePageForViewModel(currentViewModel),
-                RequestType = NavigationRequestType.FromClose
-            };
-            _navigationBus.SendClose(this, closeEvent);
+            await presenter.OnClose(currentViewModel,
+                _vmManager.ResolvePageForViewModel(currentViewModel),
+                NavigationRequestType.FromClose);
+
             await callOnNavigatingFrom(currentViewModel, parameter);
 
-            if (NavigationStack.Count > 0)
+            if (_navigationStack.Count > 0)
             {
-                currentViewModel = NavigationStack.Peek();
+                currentViewModel = _navigationStack.Peek();
 
                 // actual UI work
-                var showEvent = new NavigationBusNavigateEventArgs
-                {
-                    ViewModel = currentViewModel,
-                    Page = _vmManager.ResolvePageForViewModel(currentViewModel),
-                    RequestType = NavigationRequestType.FromClose
-                };
-                _navigationBus.SendShow(this, showEvent);
+                await presenter.OnShow(currentViewModel,
+                    _vmManager.ResolvePageForViewModel(currentViewModel),
+                    NavigationRequestType.FromClose);
+
                 await callOnNavigatedTo(currentViewModel, null);
             }
             return currentViewModel;
         }
 
-        public void DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
-            => _navigationBus.SendAlert(this, new NavigationBusAlertEventArgs
-            {
-                Title = title,
-                Message = message,
-                OkText = okText,
-                CancelText = cancelText
-            });
+        public async Task DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        {
+            var presenter = _container.Resolve<IPresenter>();
+            await presenter.OnDisplayAlert(title, message, okText, cancelText);
+        }
 
         private async Task callOnNavigatedTo<TViewModel>(TViewModel viewModel, object parameter = null)
             where TViewModel : BaseViewModel

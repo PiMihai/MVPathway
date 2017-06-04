@@ -1,5 +1,6 @@
-﻿using MVPathway.Navigation.Abstractions;
-using MVPathway.Presenters.Abstractions;
+﻿using MVPathway.Integration.Services.Contracts;
+using MVPathway.MVVM.Abstractions;
+using MVPathway.Navigation.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
 using Xamarin.Forms;
 
@@ -7,11 +8,14 @@ namespace MVPathway.Integration.ViewModels
 {
     public class DViewModel : _ViewModel
     {
-        public override string Title => "D";
         public override Color Color => DColor;
 
-        public DViewModel(INavigator navigator, NavigationStackDebuggerViewObject stackDebugger)
-            : base(navigator, stackDebugger)
+        public DViewModel(INavigator navigator,
+                          IDiContainer container,
+                          IViewModelDefiner vmDefiner,
+                          ICacheService cacheService,
+                          NavigationStackDebuggerViewObject stackDebugger)
+            : base(navigator, container, vmDefiner, cacheService, stackDebugger)
         {
         }
     }

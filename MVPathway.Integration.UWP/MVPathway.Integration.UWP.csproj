@@ -141,6 +141,15 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>5.3.3</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>9.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xam.Plugins.Settings">
+      <Version>2.5.8</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms">
       <Version>2.3.4.247</Version>
     </PackageReference>

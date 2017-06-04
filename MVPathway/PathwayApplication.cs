@@ -1,13 +1,12 @@
 ﻿using MVPathway.Builder.Abstractions;
 using MVPathway.Logging;
-using MVPathway.Logging.Abstractions;
 using MVPathway.Messages;
-using MVPathway.Messages.Abstractions;
 using MVPathway.MVVM;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation;
-using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters;
+using MVPathway.Settings;
+using MVPathway.Settings.Abstractions;
 using Xamarin.Forms;
 
 namespace MVPathway
@@ -17,18 +16,14 @@ namespace MVPathway
         public virtual void Configure(IPathwayBuilder builder)
         {
             builder.UseDiContainer<DiContainer>()
-                   .UseNavigationBus<NavigationBus>()
-                   .UseViewModelManager<ViewModelManager>()
-                   .UseMessagingManager<Messenger>()
                    .UseLogger<PathwayLogger>()
-                   .UsePresenter<SinglePagePresenter>()
-                   .UseNavigator<Navigator>();
+                   .UseSettings<ISettingsRepository, SettingsRepository>()
+                   .UseViewModelManager<ViewModelManager>()
+                   .UseMessenger<Messenger>()
+                   .UseNavigator<Navigator>()
+                   .UsePresenter<SinglePagePresenter>();
         }
 
-        public abstract void Init(IDiContainer container,
-                                   IViewModelManager vmManager,
-                                   IMessenger messagingManager,
-                                   INavigator navigator,
-                                   ILogger logger);
+        public virtual void ConfigureServices(IDiContainer container) { }
     }
 }

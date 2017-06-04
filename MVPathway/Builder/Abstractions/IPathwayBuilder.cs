@@ -3,26 +3,29 @@ using MVPathway.Messages.Abstractions;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters.Abstractions;
+using MVPathway.Settings.Abstractions;
 using System;
 
 namespace MVPathway.Builder.Abstractions
 {
     public interface IPathwayBuilder
     {
-        IDiContainer Container { get; }
-        IPathwayBuilder UseDiContainer<TDiContainer>()
+        IPathwayBuilder UseDiContainer<TDiContainer>(Action<TDiContainer> configure = null)
             where TDiContainer : class, IDiContainer;
-        IPathwayBuilder UseNavigator<TNavigator>()
-            where TNavigator : class, INavigator;
-        IPathwayBuilder UseNavigationBus<TNavigationBus>()
-            where TNavigationBus : class, INavigationBus;
-        IPathwayBuilder UseMessagingManager<TMessagingManager>()
-            where TMessagingManager : class, IMessenger;
-        IPathwayBuilder UseLogger<TLogger>()
+        IPathwayBuilder UseMessenger<TMessenger>(Action<TMessenger> configure = null)
+            where TMessenger : class, IMessenger;
+        IPathwayBuilder UseLogger<TLogger>(Action<TLogger> configure = null)
             where TLogger : class, ILogger;
+        IPathwayBuilder UseSettings<TSettingsInterface, TSettingsConcrete>(Action<TSettingsConcrete> configure = null)
+            where TSettingsInterface : ISettingsRepository
+            where TSettingsConcrete : class, TSettingsInterface;
+        IPathwayBuilder UseNavigator<TNavigator>(Action<TNavigator> configure = null)
+            where TNavigator : class, INavigator;
         IPathwayBuilder UsePresenter<TPresenter>(Action<TPresenter> configure = null)
             where TPresenter : class, IPresenter;
-        IPathwayBuilder UseViewModelManager<TViewModelManager>()
+        IPathwayBuilder UseViewModelManager<TViewModelManager>(Action<TViewModelManager> configure = null)
             where TViewModelManager : class, IViewModelManager;
+        IPathwayBuilder UseAppStart<TAppStart>()
+            where TAppStart : class, IAppStart;
     }
 }

@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using static MVPathway.Helpers.MvpHelpers;
 using MVPathway.Navigation.Abstractions;
+using MVPathway.Navigation;
 
 namespace MVPathway.Presenters
 {
     public class SinglePagePresenter : BasePresenter
     {
-        public SinglePagePresenter(INavigationBus navigationBus) : base(navigationBus)
+        public SinglePagePresenter(INavigator navigator)
+            : base(navigator)
         {
         }
 
@@ -27,7 +29,7 @@ namespace MVPathway.Presenters
         {
         }
 
-        public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        public override async Task<bool> OnDisplayAlert(string title, string message, string okText, string cancelText = null)
         {
             if (cancelText != null)
             {

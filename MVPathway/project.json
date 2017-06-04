@@ -1,7 +1,10 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "DryIoc.dll": "2.11.0-preview-02",
+    "DryIoc.dll": "2.11.3",
+    "Newtonsoft.Json": "9.0.1",
+    "System.ValueTuple": "4.3.1",
+    "Xam.Plugins.Settings": "2.5.8",
     "Xamarin.Forms": "2.3.4.247"
   },
   "frameworks": {

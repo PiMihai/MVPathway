@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using static MVPathway.Helpers.MvpHelpers;
 using MVPathway.Utils.ViewModels.Qualities;
 using System.Linq;
+using MVPathway.Navigation;
 using MVPathway.Navigation.Abstractions;
 
 namespace MVPathway.Utils.Presenters
@@ -17,11 +18,13 @@ namespace MVPathway.Utils.Presenters
 
         private bool _isHandledPop;
         private bool _isHandledTabChange;
+
         private NavigationPage _navigationPage;
         private TTabbedPage _tabbedPage;
 
-        public TabbedPresenter(IViewModelManager vmManager, INavigationBus navigationBus)
-            : base(navigationBus)
+        public TabbedPresenter(IViewModelManager vmManager,
+                               INavigator navigator)
+            : base(navigator)
         {
             _vmManager = vmManager;
         }
@@ -31,16 +34,16 @@ namespace MVPathway.Utils.Presenters
             await base.Init();
             _isHandledTabChange = true;
             _navigationPage = new NavigationPage();
-            _navigationPage.Popped += onPagePopped;
+            _navigationPage.Popped += async (s, e) => await onPagePopped(s, e);
             _tabbedPage = Activator.CreateInstance<TTabbedPage>();
-            _tabbedPage.CurrentPageChanged += onTabChanged;
+            _tabbedPage.CurrentPageChanged += async (s, e) => await onTabChanged(s, e);
             var childPages = _vmManager.ResolvePagesForViewModels(def => def.HasQuality<IChildQuality>());
             foreach (var child in childPages)
             {
                 _tabbedPage.Children.Add(child);
                 NavigationPage.SetHasNavigationBar(child, true);
             }
-            await _navigationPage.PushAsync(_tabbedPage);
+            //await _navigationPage.PushAsync(_tabbedPage);
             NavigationPage.SetHasNavigationBar(_tabbedPage, false);
             await OnUiThread(() => Application.Current.MainPage = _navigationPage);
             _isHandledTabChange = false;
@@ -50,28 +53,14 @@ namespace MVPathway.Utils.Presenters
         {
             if (viewModel.Definition.HasQuality<IChildQuality>())
             {
-                if (!_navigationPage.Navigation.NavigationStack.Contains(_tabbedPage))
-                {
-                    await _navigationPage.PushAsync(_tabbedPage);
-                }
-                else
-                {
-                    while (_navigationPage.CurrentPage != _tabbedPage)
-                    {
-                        await _navigationPage.PopAsync();
-                    }
-                }
+                await pushOrPopToPage(_tabbedPage);
                 _isHandledTabChange = true;
                 _tabbedPage.CurrentPage = page;
                 _isHandledTabChange = false;
             }
             else
             {
-                if (requestType != NavigationRequestType.FromShow)
-                {
-                    return;
-                }
-                await _navigationPage.PushAsync(page);
+                await pushOrPopToPage(page);
             }
         }
 
@@ -92,39 +81,47 @@ namespace MVPathway.Utils.Presenters
             _isHandledPop = false;
         }
 
-        public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        public override async Task<bool> OnDisplayAlert(string title, string message, string okText, string cancelText = null)
         {
             return await _navigationPage.DisplayAlert(title, message, okText, cancelText);
         }
 
-        private void onTabChanged(object sender, EventArgs e)
+        private async Task pushOrPopToPage(Page page)
+        {
+            if (!_navigationPage.Navigation.NavigationStack.Contains(page))
+            {
+                await _navigationPage.PushAsync(page);
+            }
+            else
+            {
+                while (_navigationPage.CurrentPage != page)
+                {
+                    await _navigationPage.PopAsync();
+                }
+            }
+        }
+
+        private async Task onTabChanged(object sender, EventArgs e)
         {
             if (_isHandledTabChange)
             {
                 return;
             }
             var newVm = _tabbedPage.CurrentPage.BindingContext as BaseViewModel;
-            if(newVm == null)
+            if (newVm == null)
             {
                 return;
             }
-            NavigationBus.SendShow(this, new Navigation.NavigationBusNavigateEventArgs
-            {
-                ViewModel = newVm,
-                RequestType = NavigationRequestType.FromShow
-            });
+            await Navigator.Show(newVm);
         }
 
-        private void onPagePopped(object sender, EventArgs e)
+        private async Task onPagePopped(object sender, EventArgs e)
         {
             if (_isHandledPop)
             {
                 return;
             }
-            NavigationBus.SendClose(this, new Navigation.NavigationBusNavigateEventArgs
-            {
-                RequestType = NavigationRequestType.FromClose
-            });
+            await Navigator.Close(this);
         }
     }
 }

@@ -5,43 +5,108 @@ using MVPathway.MVVM;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters.Abstractions;
+using MVPathway.Settings.Abstractions;
 using System;
 
 namespace MVPathway.Builder
 {
     public class PathwayBuilder : IPathwayBuilder
     {
+        private Action<IDiContainer> _diContainerConfig;
+        private Action<ILogger> _loggerConfig;
+        private Action<ISettingsRepository> _settingsRepositoryConfig;
+        private Action<IViewModelManager> _vmManagerConfig;
+        private Action<IMessenger> _messengerConfig;
+        private Action<INavigator> _navigatorConfig;
+        private Action<IPresenter> _presenterConfig;
+
         public IDiContainer Container { get; private set; }
 
         internal PathwayBuilder()
         {
         }
 
-        internal Action<IPresenter> ConfigurePresenter { get; private set; }
-
-        public IPathwayBuilder UseDiContainer<TDiContainer>()
+        public IPathwayBuilder UseDiContainer<TDiContainer>(Action<TDiContainer> configure = null)
           where TDiContainer : class, IDiContainer
         {
             Container = Activator.CreateInstance<TDiContainer>();
             Container.RegisterInstance(Container);
 
+            if (configure != null)
+            {
+                _diContainerConfig = p => configure.Invoke(p as TDiContainer);
+            }
+
             return this;
         }
 
-        public IPathwayBuilder UseLogger<TLogger>()
+        public IPathwayBuilder UseLogger<TLogger>(Action<TLogger> configure = null)
             where TLogger : class, ILogger
         {
             ensureDiContainerLoaded();
             Container.Register<ILogger, TLogger>();
 
+            if (configure != null)
+            {
+                _loggerConfig = p => configure.Invoke(p as TLogger);
+            }
+
             return this;
         }
 
-        public IPathwayBuilder UseMessagingManager<TMessagingManager>()
-            where TMessagingManager : class, IMessenger
+        public IPathwayBuilder UseSettings<TSettingsInterface, TSettingsConcrete>(Action<TSettingsConcrete> configure = null)
+            where TSettingsInterface : ISettingsRepository
+            where TSettingsConcrete : class, TSettingsInterface
         {
             ensureDiContainerLoaded();
-            Container.Register<IMessenger, TMessagingManager>();
+            Container.Register<TSettingsInterface, TSettingsConcrete>();
+
+            if (configure != null)
+            {
+                _settingsRepositoryConfig = p => configure.Invoke(p as TSettingsConcrete);
+            }
+
+            return this;
+        }
+
+        public IPathwayBuilder UseViewModelManager<TViewModelManager>(Action<TViewModelManager> configure = null)
+            where TViewModelManager : class, IViewModelManager
+        {
+            ensureDiContainerLoaded();
+            Container.Register<IViewModelManager, TViewModelManager>();
+
+            if (configure != null)
+            {
+                _vmManagerConfig = p => configure.Invoke(p as TViewModelManager);
+            }
+
+            return this;
+        }
+
+        public IPathwayBuilder UseMessenger<TMessenger>(Action<TMessenger> configure = null)
+            where TMessenger : class, IMessenger
+        {
+            ensureDiContainerLoaded();
+            Container.Register<IMessenger, TMessenger>();
+
+            if (configure != null)
+            {
+                _messengerConfig = p => configure.Invoke(p as TMessenger);
+            }
+
+            return this;
+        }
+
+        public IPathwayBuilder UseNavigator<TNavigator>(Action<TNavigator> configure = null)
+            where TNavigator : class, INavigator
+        {
+            ensureDiContainerLoaded();
+            Container.Register<INavigator, TNavigator>();
+
+            if (configure != null)
+            {
+                _navigatorConfig = p => configure.Invoke(p as TNavigator);
+            }
 
             return this;
         }
@@ -50,19 +115,45 @@ namespace MVPathway.Builder
             where TPresenter : class, IPresenter
         {
             ensureDiContainerLoaded();
-            Container.Resolve<INavigationBus>().ChangePresenterTo<TPresenter>();
-            ConfigurePresenter = p => configure?.Invoke(p as TPresenter);
+            Container.Register<IPresenter, TPresenter>();
+
+            if (configure != null)
+            {
+                _presenterConfig = p => configure.Invoke(p as TPresenter);
+            }
 
             return this;
         }
 
-        public IPathwayBuilder UseViewModelManager<TViewModelManager>()
-            where TViewModelManager : class, IViewModelManager
+        public IPathwayBuilder UseAppStart<TAppStart>()
+            where TAppStart : class, IAppStart
         {
             ensureDiContainerLoaded();
-            Container.Register<IViewModelManager, TViewModelManager>();
+            Container.Register<IAppStart, TAppStart>();
 
             return this;
+        }
+
+        public void Build()
+        {
+            var logger = Container.Resolve<ILogger>();
+            _loggerConfig?.Invoke(logger);
+
+            var settings = Container.Resolve<ISettingsRepository>();
+            _settingsRepositoryConfig?.Invoke(settings);
+
+            var vmManager = Container.Resolve<IViewModelManager>();
+            _vmManagerConfig?.Invoke(vmManager);
+
+            var messenger = Container.Resolve<IMessenger>();
+            _messengerConfig?.Invoke(messenger);
+
+            var presenter = Container.Resolve<IPresenter>();
+            presenter.Init();
+            _presenterConfig?.Invoke(presenter);
+
+            var navigator = Container.Resolve<INavigator>();
+            _navigatorConfig?.Invoke(navigator);
         }
 
         private void ensureDiContainerLoaded()
@@ -71,24 +162,6 @@ namespace MVPathway.Builder
             {
                 Container = new DiContainer();
             }
-        }
-
-        public IPathwayBuilder UseNavigator<TNavigator>()
-            where TNavigator : class, INavigator
-        {
-            ensureDiContainerLoaded();
-            Container.Register<INavigator, TNavigator>();
-
-            return this;
-        }
-
-        public IPathwayBuilder UseNavigationBus<TNavigationBus>()
-            where TNavigationBus : class, INavigationBus
-        {
-            ensureDiContainerLoaded();
-            Container.Register<INavigationBus, TNavigationBus>();
-
-            return this;
         }
     }
 }

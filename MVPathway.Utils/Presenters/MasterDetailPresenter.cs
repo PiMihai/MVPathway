@@ -33,8 +33,10 @@ namespace MVPathway.Utils.Presenters
 
         public MasterBehavior MenuBehaviour { get; set; } = MasterBehavior.Popover;
 
-        public MasterDetailPresenter(IMessenger messenger, IViewModelManager vmManager, INavigationBus navigationBus)
-            : base(navigationBus)
+        public MasterDetailPresenter(IMessenger messenger,
+                                     IViewModelManager vmManager,
+                                     INavigator navigator)
+            : base(navigator)
         {
             _messenger = messenger;
             _vmManager = vmManager;
@@ -55,10 +57,7 @@ namespace MVPathway.Utils.Presenters
                 // clean stack of any modal VMs
                 while (_navigationPage != null && _navigationPage.Navigation.NavigationStack.Count > 1)
                 {
-                    NavigationBus.SendClose(this, new NavigationBusNavigateEventArgs
-                    {
-                        RequestType = NavigationRequestType.FromShow
-                    });
+                    await Navigator.Close(this);
                 }
             }
 
@@ -72,12 +71,8 @@ namespace MVPathway.Utils.Presenters
                 try
                 {
                     var mainChildVm = _vmManager.ResolveViewModelByDefinition(def => def.HasQuality<IMainChildQuality>());
-                    NavigationBus.SendShow(this, new NavigationBusNavigateEventArgs
-                    {
-                        ViewModel = mainChildVm,
-                        RequestType = NavigationRequestType.FromShow
-                    });
-                    Application.Current.MainPage = _masterDetailPage;
+                    await Navigator.Show(mainChildVm);
+                    await OnUiThread(() => Application.Current.MainPage = _masterDetailPage);
                 }
                 catch (Exception ex)
                 {
@@ -140,7 +135,7 @@ namespace MVPathway.Utils.Presenters
             }
         }
 
-        public override async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        public override async Task<bool> OnDisplayAlert(string title, string message, string okText, string cancelText = null)
         {
             if (cancelText != null)
             {
@@ -161,10 +156,7 @@ namespace MVPathway.Utils.Presenters
             {
                 return;
             }
-            NavigationBus.SendClose(this, new NavigationBusNavigateEventArgs
-            {
-                RequestType = NavigationRequestType.FromClose
-            });
+            await Navigator.Close(this);
         }
 
         private void onCloseDrawerMessage(MenuToggleMessage message)

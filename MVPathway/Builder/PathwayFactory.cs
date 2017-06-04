@@ -1,8 +1,5 @@
-﻿using MVPathway.Logging.Abstractions;
-using MVPathway.Messages.Abstractions;
+﻿using MVPathway.Builder.Abstractions;
 using MVPathway.MVVM.Abstractions;
-using MVPathway.Navigation.Abstractions;
-using MVPathway.Presenters.Abstractions;
 using System;
 
 namespace MVPathway.Builder
@@ -15,15 +12,14 @@ namespace MVPathway.Builder
         {
             var app = Activator.CreateInstance<TApp>();
             var builder = new PathwayBuilder();
+
             app.Configure(builder);
+            builder.Build();
+
+            app.ConfigureServices(builder.Container);
             platformSetup?.Invoke(builder.Container);
-            var presenter = builder.Container.Resolve<IPresenter>();
-            builder.ConfigurePresenter?.Invoke(presenter);
-            app.Init(builder.Container,
-                              builder.Container.Resolve<IViewModelManager>(),
-                              builder.Container.Resolve<IMessenger>(),
-                              builder.Container.Resolve<INavigator>(),
-                              builder.Container.Resolve<ILogger>());
+
+            builder.Container.Resolve<IAppStart>().Start();
 
             return app;
         }

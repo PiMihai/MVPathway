@@ -1,8 +1,6 @@
 ﻿using MVPathway.Messages;
 using MVPathway.Messages.Abstractions;
 using MVPathway.MVVM.Abstractions;
-using MVPathway.Navigation.Abstractions;
-using MVPathway.Presenters.Abstractions;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -10,17 +8,35 @@ namespace MVPathway.Utils.ViewModels.ViewObjects
 {
     public class NavigationStackDebuggerViewObject : BaseObservableObject
     {
-        private IDiContainer _container;
+        private readonly IMessenger _messenger;
+        public ObservableCollection<string> NavigationStack { get; private set; }
+            = new ObservableCollection<string>();
 
-        public ObservableCollection<string> NavigationStack =>
-            new ObservableCollection<string>(_container.Resolve<INavigator>()
-                .NavigationStack.Select(vm => vm.GetType().Name));
-
-        public NavigationStackDebuggerViewObject(IDiContainer container, IMessenger messenger)
+        public NavigationStackDebuggerViewObject(IMessenger messenger)
         {
-            _container = container;
-            messenger.Subscribe<NavigationStackUpdatedMessage>(
-                m => OnPropertyChanged(nameof(NavigationStack)));
+            _messenger = messenger;
+        }
+
+        public void Subscribe()
+        {
+            _messenger.Subscribe<NavigationStackUpdatedMessage>(onStackUpdated);
+        }
+
+        public void Unsubscribe()
+        {
+            _messenger.Unsubscribe<NavigationStackUpdatedMessage>(onStackUpdated);
+        }
+
+        private void onStackUpdated(NavigationStackUpdatedMessage message)
+        {
+            if (message.WasPopped)
+            {
+                NavigationStack.Remove(message.ViewModel.GetType().Name.Replace("ViewModel", string.Empty));
+            }
+            else
+            {
+                NavigationStack.Add(message.ViewModel.GetType().Name.Replace("ViewModel", string.Empty));
+            }
         }
     }
 }

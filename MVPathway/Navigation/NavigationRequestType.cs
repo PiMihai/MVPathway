@@ -1,4 +1,4 @@
-﻿namespace MVPathway.Presenters
+﻿namespace MVPathway.Navigation
 {
     public enum NavigationRequestType
     {

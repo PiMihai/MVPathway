@@ -8,7 +8,11 @@ namespace MVPathway.Utils.Builder
     {
         public static IPathwayBuilder UseNavigationStackDebugger(this IPathwayBuilder builder)
         {
-            builder.Container.Register<NavigationStackDebuggerViewObject>();
+            var b = builder as PathwayBuilder;
+
+            b.Container.Register<NavigationStackDebuggerViewObject>();
+            b.Container.Resolve<NavigationStackDebuggerViewObject>().Subscribe();
+
             return builder;
         }
     }
