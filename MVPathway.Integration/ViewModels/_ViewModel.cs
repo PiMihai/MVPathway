@@ -1,4 +1,5 @@
 ﻿using MVPathway.Integration.Services.Contracts;
+using MVPathway.Integration.ViewModels.ViewObjects;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters;
@@ -55,13 +56,12 @@ namespace MVPathway.Integration.ViewModels
         private async Task changePresenter(Type presenterType)
         {
             await _vmDefiner.RedefineBasedOnPresenterType(presenterType);
-            await _navigator.ChangePresenter(presenterType);
+            await _navigator.ChangePresenter(presenterType, p =>
+            {
+                var bp = p as BasePresenter;
+                bp.Animated = false;
+            });
         }
-
-        private Command _startCommand;
-        public Command StartCommand => _startCommand ??
-            (_startCommand = new Command(() => _navigator.Show<AViewModel>()));
-
 
         public Color AColor => Color.FromHex("#F44336");
         public Color BColor => Color.FromHex("#9C27B0");
@@ -111,10 +111,13 @@ namespace MVPathway.Integration.ViewModels
 
         public NavigationStackDebuggerViewObject StackDebugger { get; private set; }
 
+        public LogViewObject Log { get; private set; }
+
         public _ViewModel(INavigator navigator,
                           IDiContainer container,
                           IViewModelDefiner vmDefiner,
                           ICacheService cacheService,
+                          LogViewObject log,
                           NavigationStackDebuggerViewObject stackDebugger)
         {
             _navigator = navigator;
@@ -122,6 +125,7 @@ namespace MVPathway.Integration.ViewModels
             _vmDefiner = vmDefiner;
             _cacheService = cacheService;
             StackDebugger = stackDebugger;
+            Log = log;
 
             Title = GetType().Name.Replace("ViewModel", string.Empty);
         }
@@ -131,9 +135,9 @@ namespace MVPathway.Integration.ViewModels
             await base.OnNavigatedTo(parameter);
             Presenters = Presenters ?? new ObservableCollection<Type>(new Type[] {
                 typeof(SinglePagePresenter),
-                typeof(StackPresenter<NavigationPage>),
-                typeof(MasterDetailPresenter<MasterDetailPage>),
-                typeof(TabbedPresenter<TabbedPage>)
+                typeof(StackPresenter),
+                typeof(MasterDetailPresenter),
+                typeof(TabbedPresenter)
             });
             SelectedPresenter = SelectedPresenter ?? Presenters?.FirstOrDefault();
         }

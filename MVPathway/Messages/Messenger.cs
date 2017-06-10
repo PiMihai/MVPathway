@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MVPathway.Messages
 {
-    class Messenger : IMessenger
+    public class Messenger : IMessenger
     {
         private readonly ILogger _logger;
 

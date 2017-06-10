@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace MVPathway.MVVM
 {
-    class ViewModelManager : IViewModelManager
+    public class ViewModelManager : IViewModelManager
     {
         private string EXCEPTION_CANNOT_CREATE_PAGE(Type pageType, Type viewModelType) => $"Cannot create {pageType.Name} for {viewModelType.Name}. Make sure the page has a public default constructor.";
         private string EXCEPTION_NO_PAGE_REGISTERED_FOR_VM(Type viewModelType) => $"No page registered for {viewModelType.Name}";

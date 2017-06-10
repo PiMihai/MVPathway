@@ -1,4 +1,5 @@
 ﻿using MVPathway.Integration.Services.Contracts;
+using MVPathway.Integration.ViewModels.ViewObjects;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Utils.ViewModels.ViewObjects;
@@ -14,8 +15,9 @@ namespace MVPathway.Integration.ViewModels
                           IDiContainer container,
                           IViewModelDefiner vmDefiner,
                           ICacheService cacheService,
+                          LogViewObject log,
                           NavigationStackDebuggerViewObject stackDebugger)
-            : base(navigator, container, vmDefiner, cacheService, stackDebugger)
+            : base(navigator, container, vmDefiner, cacheService, log, stackDebugger)
         {
         }
     }

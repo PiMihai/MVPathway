@@ -11,6 +11,8 @@ namespace MVPathway.Presenters
     {
         protected INavigator Navigator { get; private set; }
 
+        public bool Animated { get; set; } = true;
+
         public BasePresenter(INavigator navigator)
         {
             Navigator = navigator;

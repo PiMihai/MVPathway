@@ -4,7 +4,7 @@ using System;
 
 namespace MVPathway.MVVM
 {
-    class DiContainer : IDiContainer
+    public class DiContainer : IDiContainer
     {
         private readonly IContainer _container = new Container();
 

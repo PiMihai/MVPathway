@@ -47,7 +47,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Builder\PathwayBuilderExtensions.cs" />
     <Compile Include="IntegrationAppStart.cs" />
+    <Compile Include="Messages\LogMessage.cs" />
     <Compile Include="Pages\APage.xaml.cs">
       <DependentUpon>APage.xaml</DependentUpon>
     </Compile>
@@ -76,6 +78,7 @@
     <Compile Include="Services\CacheService.cs" />
     <Compile Include="Services\Contracts\ICacheService.cs" />
     <Compile Include="Services\Contracts\IViewModelDefiner.cs" />
+    <Compile Include="Services\BroadcastLogger.cs" />
     <Compile Include="Services\ViewModelDefiner.cs" />
     <Compile Include="ViewModels\AViewModel.cs" />
     <Compile Include="ViewModels\BViewModel.cs" />
@@ -85,7 +88,11 @@
     <Compile Include="ViewModels\FViewModel.cs" />
     <Compile Include="ViewModels\GViewModel.cs" />
     <Compile Include="ViewModels\HViewModel.cs" />
+    <Compile Include="ViewModels\ViewObjects\LogViewObject.cs" />
     <Compile Include="ViewModels\_ViewModel.cs" />
+    <Compile Include="Views\LogView.xaml.cs">
+      <DependentUpon>LogView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -154,7 +161,12 @@
       <Name>MVPathway</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Views\LogView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

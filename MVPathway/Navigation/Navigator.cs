@@ -8,6 +8,7 @@ using MVPathway.Messages.Abstractions;
 using MVPathway.Logging.Abstractions;
 using System.Collections.Generic;
 using MVPathway.Messages;
+using System.Linq;
 
 namespace MVPathway.Navigation
 {
@@ -17,7 +18,7 @@ namespace MVPathway.Navigation
 
         private const string ERROR_VM_STACK_EMPTY = "Received close request but VM stack is empty.";
 
-        private string WARNING_VM_ALREADY_SHOWN(Type viewModelType) => $"Received show request for {viewModelType.Name}, but VM already shown.";
+        private string WARNING_VM_ALREADY_SHOWN(Type viewModelType) => $"Received show request for {viewModelType.Name}, but VM already shown. Navigator will go back to that ViewModel.";
         private string WARNING_VM_STACK_ROOT_REACHED = "Received close request but already reached stack root.";
 
         private string INFO_ON_NAVIGATED_TO(Type viewModelType) => $"{viewModelType.Name} OnNavigatedTo called.";
@@ -30,6 +31,8 @@ namespace MVPathway.Navigation
 
         private Stack<BaseViewModel> _navigationStack = new Stack<BaseViewModel>();
 
+        public bool DuringRequestedTransition { get; private set; }
+
         public Navigator(IDiContainer container,
                          ILogger logger,
                          IViewModelManager vmManager,
@@ -41,14 +44,15 @@ namespace MVPathway.Navigation
             _messenger = messenger;
         }
 
-        public async Task ChangePresenter<TPresenter>()
-            where TPresenter : IPresenter
+        public async Task ChangePresenter<TPresenter>(Action<TPresenter> configure = null)
+            where TPresenter : class, IPresenter
         {
-            await ChangePresenter(typeof(TPresenter));
+            await ChangePresenter(typeof(TPresenter), p => configure?.Invoke(p as TPresenter));
         }
 
-        public async Task ChangePresenter(Type presenterType)
+        public async Task ChangePresenter(Type presenterType, Action<IPresenter> configure = null)
         {
+            DuringRequestedTransition = true;
             var auxStack = new Stack<BaseViewModel>();
             while (_navigationStack.Count > 0)
             {
@@ -63,28 +67,30 @@ namespace MVPathway.Navigation
             _container.Register(presenterType);
             var instance = _container.Resolve(presenterType) as IPresenter;
             _container.RegisterInstance(instance);
+            configure?.Invoke(instance);
             await instance.Init();
             while (auxStack.Count > 0)
             {
                 var nextVmToPush = auxStack.Pop();
                 await Show(nextVmToPush);
             }
+            DuringRequestedTransition = false;
         }
 
-        public async Task<TViewModel> Show<TViewModel>(object parameter = null)
+        public async Task Show<TViewModel>(object parameter = null)
                   where TViewModel : BaseViewModel
         {
             var viewModel = _container.Resolve<TViewModel>();
-            return await Show(viewModel, parameter) as TViewModel;
+            await Show(viewModel, parameter);
         }
 
-        public async Task<BaseViewModel> Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
+        public async Task Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
         {
             var viewModel = _vmManager.ResolveViewModelByDefinition(definitionFilter);
-            return await Show(viewModel, parameter);
+            await Show(viewModel, parameter);
         }
 
-        public async Task<BaseViewModel> Show(BaseViewModel viewModel, object parameter = null)
+        public async Task Show(BaseViewModel viewModel, object parameter = null)
         {
             var presenter = _container.Resolve<IPresenter>();
 
@@ -96,15 +102,21 @@ namespace MVPathway.Navigation
             var viewModelType = viewModel.GetType();
             if (_navigationStack.Count > 0)
             {
-                if (_navigationStack.Peek().GetType().Name == viewModelType.Name)
+                if (_navigationStack.Any(vm => vm.GetType().Name == viewModelType.Name))
                 {
                     _logger.LogWarning(WARNING_VM_ALREADY_SHOWN(viewModelType));
-                    return null;
+                    while (_navigationStack.Peek().GetType().Name != viewModelType.Name)
+                    {
+                        await Close();
+                    }
+                    return;
                 }
-                // actual UI work
+
+                DuringRequestedTransition = true;
                 await presenter.OnClose(_navigationStack.Peek(),
                     _vmManager.ResolvePageForViewModel(_navigationStack.Peek()),
                     NavigationRequestType.FromShow);
+                DuringRequestedTransition = false;
 
                 await callOnNavigatingFrom(_navigationStack.Peek(), null);
             }
@@ -114,13 +126,13 @@ namespace MVPathway.Navigation
                 ViewModel = viewModel
             });
 
-            // actual UI work
+            DuringRequestedTransition = true;
             await presenter.OnShow(viewModel,
                 _vmManager.ResolvePageForViewModel(viewModel),
                 NavigationRequestType.FromShow);
+            DuringRequestedTransition = false;
 
             await callOnNavigatedTo(viewModel, parameter);
-            return viewModel;
         }
 
 
@@ -153,7 +165,7 @@ namespace MVPathway.Navigation
             return result;
         }
 
-        public async Task<BaseViewModel> Close(object parameter = null)
+        public async Task Close(object parameter = null)
         {
             var presenter = _container.Resolve<IPresenter>();
 
@@ -164,7 +176,7 @@ namespace MVPathway.Navigation
             if (_navigationStack.Count == 1)
             {
                 _logger.LogWarning(WARNING_VM_STACK_ROOT_REACHED);
-                return null;
+                return;
             }
             var currentViewModel = _navigationStack.Pop();
             _messenger.Send(new NavigationStackUpdatedMessage
@@ -173,10 +185,11 @@ namespace MVPathway.Navigation
                 ViewModel = currentViewModel
             });
 
-            // actual UI work
+            DuringRequestedTransition = true;
             await presenter.OnClose(currentViewModel,
                 _vmManager.ResolvePageForViewModel(currentViewModel),
                 NavigationRequestType.FromClose);
+            DuringRequestedTransition = false;
 
             await callOnNavigatingFrom(currentViewModel, parameter);
 
@@ -184,14 +197,14 @@ namespace MVPathway.Navigation
             {
                 currentViewModel = _navigationStack.Peek();
 
-                // actual UI work
+                DuringRequestedTransition = true;
                 await presenter.OnShow(currentViewModel,
                     _vmManager.ResolvePageForViewModel(currentViewModel),
                     NavigationRequestType.FromClose);
+                DuringRequestedTransition = false;
 
                 await callOnNavigatedTo(currentViewModel, null);
             }
-            return currentViewModel;
         }
 
         public async Task DisplayAlertAsync(string title, string message, string okText, string cancelText = null)

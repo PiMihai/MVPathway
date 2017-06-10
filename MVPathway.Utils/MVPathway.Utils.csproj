@@ -48,6 +48,7 @@
     <Compile Include="Converters\BoolToNotBoolConverter.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
     <Compile Include="Converters\StringToUrlWebViewSourceConverter.cs" />
+    <Compile Include="Helpers\NavigationPageExtensions.cs" />
     <Compile Include="Messages\MenuToggleMessage.cs" />
     <Compile Include="Presenters\MasterDetailPresenter.cs" />
     <Compile Include="Presenters\StackPresenter.cs" />

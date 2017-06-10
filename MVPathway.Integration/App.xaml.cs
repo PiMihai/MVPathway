@@ -1,4 +1,5 @@
 ﻿using MVPathway.Builder.Abstractions;
+using MVPathway.Integration.Builder;
 using MVPathway.Integration.Services;
 using MVPathway.Integration.Services.Contracts;
 using MVPathway.MVVM.Abstractions;
@@ -18,7 +19,8 @@ namespace MVPathway.Integration
             base.Configure(builder);
 
             builder.UseAppStart<IntegrationAppStart>()
-                   .UseNavigationStackDebugger();
+                   .UseNavigationStackDebugger()
+                   .UseLogViewer();
         }
 
         public override void ConfigureServices(IDiContainer container)

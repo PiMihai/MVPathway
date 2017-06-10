@@ -13,8 +13,23 @@ using static MVPathway.Helpers.MvpHelpers;
 
 namespace MVPathway.Utils.Presenters
 {
-    public class MasterDetailPresenter<TMasterDetailPage> : BasePresenter
+    public class MasterDetailPresenter : MasterDetailPresenter<MasterDetailPage, NavigationPage>
+    {
+        public MasterDetailPresenter(IMessenger messenger, IViewModelManager vmManager, INavigator navigator) : base(messenger, vmManager, navigator)
+        {
+        }
+    }
+    public class MasterDetailPresenter<TMasterDetailPage> : MasterDetailPresenter<TMasterDetailPage, NavigationPage>
         where TMasterDetailPage : MasterDetailPage
+    {
+        public MasterDetailPresenter(IMessenger messenger, IViewModelManager vmManager, INavigator navigator) : base(messenger, vmManager, navigator)
+        {
+        }
+    }
+
+    public class MasterDetailPresenter<TMasterDetailPage, TNavigationPage> : BasePresenter
+        where TMasterDetailPage : MasterDetailPage
+        where TNavigationPage : NavigationPage
     {
         private const string EXCEPTION_MAIN_CHILD_NOT_REGISTERED = "IMainChildViewModel not registered. When using the MasterDetailPresenter, you must tag one of your ViewModels with the IMainChildQuality quality.";
         private const string EXCEPTION_PARENT_NOT_SHOWN_BEFORE_CHILD = "Cannot show ChildViewModel, please show the ParentViewModel first.";

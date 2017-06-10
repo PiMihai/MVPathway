@@ -40,7 +40,7 @@ namespace MVPathway.Integration.Services
         {
             await ensureNoPageHasParent();
 
-            if (presenterType == typeof(MasterDetailPresenter<MasterDetailPage>))
+            if (presenterType == typeof(MasterDetailPresenter))
             {
                 _vmDefs[typeof(AViewModel)].AddQuality<IParentQuality>();
 
@@ -61,7 +61,7 @@ namespace MVPathway.Integration.Services
                 _vmDefs[typeof(HViewModel)].AddQuality<IModalQuality>();
                 _vmDefs[typeof(HViewModel)].AddQuality<IFullscreenQuality>();
             }
-            else if (presenterType == typeof(TabbedPresenter<TabbedPage>))
+            else if (presenterType == typeof(TabbedPresenter))
             {
                 _vmDefs[typeof(AViewModel)].AddQuality<IModalQuality>();
                 _vmDefs[typeof(BViewModel)].AddQuality<IChildQuality>();
