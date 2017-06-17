@@ -47,7 +47,12 @@ namespace MVPathway.Utils.Presenters
 
         public override async Task<bool> OnDisplayAlert(string title, string message, string okText, string cancelText = null)
         {
-            return await NavigationPage.DisplayAlert(title, message, okText, cancelText);
+            if (cancelText != null)
+            {
+                return await NavigationPage?.DisplayAlert(title, message, okText, cancelText);
+            }
+            await NavigationPage?.DisplayAlert(title, message, okText);
+            return true;
         }
 
         private async Task onNavigationPagePopped(object sender, NavigationEventArgs e)
