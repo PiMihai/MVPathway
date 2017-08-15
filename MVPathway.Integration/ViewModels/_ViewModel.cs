@@ -16,7 +16,6 @@ namespace MVPathway.Integration.ViewModels
     public abstract class _ViewModel : BaseViewModel
     {
         private readonly INavigator _navigator;
-        private readonly IDiContainer _container;
         private readonly IViewModelDefiner _vmDefiner;
         private readonly ICacheService _cacheService;
 
@@ -26,7 +25,7 @@ namespace MVPathway.Integration.ViewModels
         private ObservableCollection<Type> _presenters;
         public ObservableCollection<Type> Presenters
         {
-            get { return _presenters; }
+            get => _presenters;
             set
             {
                 _presenters = value;
@@ -36,7 +35,7 @@ namespace MVPathway.Integration.ViewModels
 
         public Type SelectedPresenter
         {
-            get { return _cacheService.PresenterType; }
+            get => _cacheService.PresenterType;
             set
             {
                 if (value == null || _cacheService.PresenterType == value)
@@ -58,7 +57,7 @@ namespace MVPathway.Integration.ViewModels
             await _vmDefiner.RedefineBasedOnPresenterType(presenterType);
             await _navigator.ChangePresenter(presenterType, p =>
             {
-                var bp = p as BasePresenter;
+                var bp = (BasePresenter)p;
                 bp.Animated = false;
             });
         }
@@ -109,19 +108,17 @@ namespace MVPathway.Integration.ViewModels
         public Command CloseCommand => _closeCommand ?? (_closeCommand = new Command(
             async () => await _navigator.Close()));
 
-        public NavigationStackDebuggerViewObject StackDebugger { get; private set; }
+        public NavigationStackDebuggerViewObject StackDebugger { get; }
 
-        public LogViewObject Log { get; private set; }
+        public LogViewObject Log { get; }
 
-        public _ViewModel(INavigator navigator,
-                          IDiContainer container,
+        protected _ViewModel(INavigator navigator,
                           IViewModelDefiner vmDefiner,
                           ICacheService cacheService,
                           LogViewObject log,
                           NavigationStackDebuggerViewObject stackDebugger)
         {
             _navigator = navigator;
-            _container = container;
             _vmDefiner = vmDefiner;
             _cacheService = cacheService;
             StackDebugger = stackDebugger;
@@ -133,13 +130,13 @@ namespace MVPathway.Integration.ViewModels
         protected override async Task OnNavigatedTo(object parameter)
         {
             await base.OnNavigatedTo(parameter);
-            Presenters = Presenters ?? new ObservableCollection<Type>(new Type[] {
+            Presenters = Presenters ?? new ObservableCollection<Type>(new[] {
                 typeof(SinglePagePresenter),
                 typeof(StackPresenter),
                 typeof(MasterDetailPresenter),
                 typeof(TabbedPresenter)
             });
-            SelectedPresenter = SelectedPresenter ?? Presenters?.FirstOrDefault();
+            SelectedPresenter = SelectedPresenter ?? Presenters?.Last();
         }
     }
 }

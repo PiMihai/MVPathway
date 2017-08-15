@@ -24,6 +24,8 @@ namespace MVPathway
                    .UsePresenter<SinglePagePresenter>();
         }
 
+        public abstract void ConfigureViewModels(IViewModelManager vmManager);
+
         public virtual void ConfigureServices(IDiContainer container) { }
     }
 }

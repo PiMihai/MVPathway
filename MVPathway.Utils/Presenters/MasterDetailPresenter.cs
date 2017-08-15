@@ -31,17 +31,17 @@ namespace MVPathway.Utils.Presenters
         where TMasterDetailPage : MasterDetailPage
         where TNavigationPage : NavigationPage
     {
-        private const string EXCEPTION_MAIN_CHILD_NOT_REGISTERED = "IMainChildViewModel not registered. When using the MasterDetailPresenter, you must tag one of your ViewModels with the IMainChildQuality quality.";
-        private const string EXCEPTION_PARENT_NOT_SHOWN_BEFORE_CHILD = "Cannot show ChildViewModel, please show the ParentViewModel first.";
-        private const string EXCEPTION_PARENT_NOT_SHOWN_BEFORE_MODAL = "Cannot show ModalViewModel, please show the ParentViewModel first.";
-        private const string EXCEPTION_VM_NOT_TAGGED = "Unknown ViewModel type. When using the MasterDetailPresenter, you must tag all your MVPathway ViewModels with either IParentViewModel, IMainChildViewModel, IChildViewModel or IModalViewModel.";
+        private const string _EXCEPTION_MAIN_CHILD_NOT_REGISTERED = "IMainChildViewModel not registered. When using the MasterDetailPresenter, you must tag one of your ViewModels with the IMainChildQuality quality.";
+        private const string _EXCEPTION_PARENT_NOT_SHOWN_BEFORE_CHILD = "Cannot show ChildViewModel, please show the ParentViewModel first.";
+        private const string _EXCEPTION_PARENT_NOT_SHOWN_BEFORE_MODAL = "Cannot show ModalViewModel, please show the ParentViewModel first.";
+        private const string _EXCEPTION_VM_NOT_TAGGED = "Unknown ViewModel type. When using the MasterDetailPresenter, you must tag all your MVPathway ViewModels with either IParentViewModel, IMainChildViewModel, IChildViewModel or IModalViewModel.";
 
         private readonly IMessenger _messenger;
         private readonly IViewModelManager _vmManager;
         private readonly Dictionary<Page, NavigationPage> _cachedChildren = new Dictionary<Page, NavigationPage>();
 
         private TMasterDetailPage _masterDetailPage;
-        private NavigationPage _navigationPage;
+        private TNavigationPage _navigationPage;
         private bool _isHandledPop;
 
         public bool IsDrawerOpen => _masterDetailPage?.IsPresented ?? false;
@@ -91,18 +91,18 @@ namespace MVPathway.Utils.Presenters
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException(EXCEPTION_MAIN_CHILD_NOT_REGISTERED);
+                    throw new InvalidOperationException(_EXCEPTION_MAIN_CHILD_NOT_REGISTERED);
                 }
             }
             else if (viewModel.Definition.HasQuality<IChildQuality>())
             {
                 if (_masterDetailPage == null)
                 {
-                    throw new InvalidOperationException(EXCEPTION_PARENT_NOT_SHOWN_BEFORE_CHILD);
+                    throw new InvalidOperationException(_EXCEPTION_PARENT_NOT_SHOWN_BEFORE_CHILD);
                 }
-                var detailPage = _cachedChildren.ContainsKey(page)
+                var detailPage = (TNavigationPage)(_cachedChildren.ContainsKey(page)
                     ? _cachedChildren[page]
-                    : new NavigationPage(page);
+                    : Activator.CreateInstance(typeof(TNavigationPage), page));
 
                 NavigationPage.SetHasNavigationBar(page, !viewModel.Definition.HasQuality<IFullscreenQuality>());
 
@@ -129,14 +129,14 @@ namespace MVPathway.Utils.Presenters
             {
                 if (_navigationPage == null)
                 {
-                    throw new InvalidOperationException(EXCEPTION_PARENT_NOT_SHOWN_BEFORE_MODAL);
+                    throw new InvalidOperationException(_EXCEPTION_PARENT_NOT_SHOWN_BEFORE_MODAL);
                 }
                 NavigationPage.SetHasNavigationBar(page, !viewModel.Definition.HasQuality<IFullscreenQuality>());
                 await _navigationPage.PushAsync(page);
             }
             else
             {
-                throw new Exception(EXCEPTION_VM_NOT_TAGGED);
+                throw new Exception(_EXCEPTION_VM_NOT_TAGGED);
             }
         }
 
@@ -145,7 +145,10 @@ namespace MVPathway.Utils.Presenters
             if (viewModel.Definition.HasQuality<IModalQuality>())
             {
                 _isHandledPop = true;
-                await _navigationPage?.PopAsync();
+                if (_navigationPage != null)
+                {
+                    await _navigationPage?.PopAsync();
+                }
                 _isHandledPop = false;
             }
         }

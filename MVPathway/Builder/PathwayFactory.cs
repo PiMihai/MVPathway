@@ -18,6 +18,7 @@ namespace MVPathway.Builder
 
             app.ConfigureServices(builder.Container);
             platformSetup?.Invoke(builder.Container);
+            app.ConfigureViewModels(builder.Container.Resolve<IViewModelManager>());
 
             builder.Container.Resolve<IAppStart>().Start();
 

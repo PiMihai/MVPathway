@@ -17,7 +17,7 @@ namespace MVPathway.Integration.ViewModels
                           ICacheService cacheService,
                           LogViewObject log,
                           NavigationStackDebuggerViewObject stackDebugger)
-            : base(navigator, container, vmDefiner, cacheService, log, stackDebugger)
+            : base(navigator, vmDefiner, cacheService, log, stackDebugger)
         {
         }
     }

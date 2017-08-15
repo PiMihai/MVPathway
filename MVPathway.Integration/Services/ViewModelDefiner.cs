@@ -1,5 +1,4 @@
-﻿using MVPathway.Integration.Pages;
-using MVPathway.Integration.Services.Contracts;
+﻿using MVPathway.Integration.Services.Contracts;
 using MVPathway.Integration.ViewModels;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Utils.Presenters;
@@ -13,32 +12,40 @@ namespace MVPathway.Integration.Services
 {
     public class ViewModelDefiner : IViewModelDefiner
     {
-        private readonly IDiContainer _container;
         private readonly IViewModelManager _vmManager;
 
-        private Dictionary<Type, ViewModelDefinition> _vmDefs = new Dictionary<Type, ViewModelDefinition>();
+        private readonly Dictionary<Type, ViewModelDefinition>
+            _vmDefs = new Dictionary<Type, ViewModelDefinition>();
 
-        public ViewModelDefiner(IDiContainer container, IViewModelManager vmManager)
+        public ViewModelDefiner(IViewModelManager vmManager)
         {
-            _container = container;
             _vmManager = vmManager;
         }
 
-        public void DefineInitial()
+        public void Init()
         {
-            _vmDefs[typeof(AViewModel)] = _vmManager.RegisterPageForViewModel<AViewModel, APage>();
-            _vmDefs[typeof(BViewModel)] = _vmManager.RegisterPageForViewModel<BViewModel, BPage>();
-            _vmDefs[typeof(CViewModel)] = _vmManager.RegisterPageForViewModel<CViewModel, CPage>();
-            _vmDefs[typeof(DViewModel)] = _vmManager.RegisterPageForViewModel<DViewModel, DPage>();
-            _vmDefs[typeof(EViewModel)] = _vmManager.RegisterPageForViewModel<EViewModel, EPage>();
-            _vmDefs[typeof(FViewModel)] = _vmManager.RegisterPageForViewModel<FViewModel, FPage>();
-            _vmDefs[typeof(GViewModel)] = _vmManager.RegisterPageForViewModel<GViewModel, GPage>();
-            _vmDefs[typeof(HViewModel)] = _vmManager.RegisterPageForViewModel<HViewModel, HPage>();
+            _vmDefs[typeof(AViewModel)] = _vmManager.ResolveDefinitionForViewModel<AViewModel>();
+            _vmDefs[typeof(BViewModel)] = _vmManager.ResolveDefinitionForViewModel<BViewModel>();
+            _vmDefs[typeof(CViewModel)] = _vmManager.ResolveDefinitionForViewModel<CViewModel>();
+            _vmDefs[typeof(DViewModel)] = _vmManager.ResolveDefinitionForViewModel<DViewModel>();
+            _vmDefs[typeof(EViewModel)] = _vmManager.ResolveDefinitionForViewModel<EViewModel>();
+            _vmDefs[typeof(FViewModel)] = _vmManager.ResolveDefinitionForViewModel<FViewModel>();
+            _vmDefs[typeof(GViewModel)] = _vmManager.ResolveDefinitionForViewModel<GViewModel>();
+            _vmDefs[typeof(HViewModel)] = _vmManager.ResolveDefinitionForViewModel<HViewModel>();
         }
 
         public async Task RedefineBasedOnPresenterType(Type presenterType)
         {
             await ensureNoPageHasParent();
+
+            _vmDefs[typeof(AViewModel)].ClearQualities();
+            _vmDefs[typeof(BViewModel)].ClearQualities();
+            _vmDefs[typeof(CViewModel)].ClearQualities();
+            _vmDefs[typeof(DViewModel)].ClearQualities();
+            _vmDefs[typeof(EViewModel)].ClearQualities();
+            _vmDefs[typeof(FViewModel)].ClearQualities();
+            _vmDefs[typeof(GViewModel)].ClearQualities();
+            _vmDefs[typeof(HViewModel)].ClearQualities();
 
             if (presenterType == typeof(MasterDetailPresenter))
             {

@@ -12,7 +12,6 @@ namespace MVPathway.Builder
 {
     public class PathwayBuilder : IPathwayBuilder
     {
-        private Action<IDiContainer> _diContainerConfig;
         private Action<ILogger> _loggerConfig;
         private Action<ISettingsRepository> _settingsRepositoryConfig;
         private Action<IViewModelManager> _vmManagerConfig;
@@ -32,10 +31,7 @@ namespace MVPathway.Builder
             Container = Activator.CreateInstance<TDiContainer>();
             Container.RegisterInstance(Container);
 
-            if (configure != null)
-            {
-                _diContainerConfig = p => configure.Invoke(p as TDiContainer);
-            }
+            configure?.Invoke((TDiContainer) Container);
 
             return this;
         }

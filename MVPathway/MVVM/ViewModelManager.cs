@@ -3,14 +3,15 @@ using MVPathway.MVVM.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xamarin.Forms;
 
 namespace MVPathway.MVVM
 {
     public class ViewModelManager : IViewModelManager
     {
-        private string EXCEPTION_CANNOT_CREATE_PAGE(Type pageType, Type viewModelType) => $"Cannot create {pageType.Name} for {viewModelType.Name}. Make sure the page has a public default constructor.";
-        private string EXCEPTION_NO_PAGE_REGISTERED_FOR_VM(Type viewModelType) => $"No page registered for {viewModelType.Name}";
+        private static string EXCEPTION_CANNOT_CREATE_PAGE(Type pageType, Type viewModelType) => $"Cannot create {pageType.Name} for {viewModelType.Name}. Make sure the page has a public default constructor.";
+        private static string EXCEPTION_NO_PAGE_REGISTERED_FOR_VM(Type viewModelType) => $"No page registered for {viewModelType.Name}";
 
         private readonly IDiContainer _container;
         private readonly ILogger _logger;
@@ -22,26 +23,33 @@ namespace MVPathway.MVVM
             _logger = logger;
         }
 
+        public void AutoScanAndRegister(Assembly assembly)
+        {
+            var viewModelTypes = assembly
+                .DefinedTypes
+                .Where(t => typeof(BaseViewModel).GetTypeInfo().IsAssignableFrom(t))
+                .ToList();
+            var pageTypes = assembly
+                .DefinedTypes
+                .Where(t => typeof(Page).GetTypeInfo().IsAssignableFrom(t))
+                .ToList();
+
+            foreach (var viewModelType in viewModelTypes)
+            {
+                var name = viewModelType.Name.Replace("ViewModel", "");
+                var pageType = pageTypes.FirstOrDefault(t => t.Name.Replace("Page", "") == name);
+                if (pageType == null)
+                {
+                    continue;
+                }
+                registerPageForViewModel(viewModelType.AsType(), pageType.AsType());
+            }
+        }
+
         public ViewModelDefinition RegisterPageForViewModel<TViewModel, TPage>()
             where TViewModel : BaseViewModel
             where TPage : class
-        {
-            _container.Register<TViewModel>();
-            var viewModelInstance = _container.Resolve<TViewModel>();
-            viewModelInstance.Definition = new ViewModelDefinition();
-
-            var pageInstance = Activator.CreateInstance<TPage>() as Page;
-            if (pageInstance == null)
-            {
-                throw new InvalidOperationException(
-                    EXCEPTION_CANNOT_CREATE_PAGE(typeof(TPage), typeof(TViewModel)));
-            }
-
-            pageInstance.BindingContext = viewModelInstance;
-            _map[viewModelInstance] = pageInstance;
-
-            return viewModelInstance.Definition;
-        }
+            => registerPageForViewModel(typeof(TViewModel), typeof(TPage));
 
         public BaseViewModel ResolveViewModelByDefinition(Func<ViewModelDefinition, bool> definitionFilter)
         {
@@ -79,13 +87,39 @@ namespace MVPathway.MVVM
         public List<Page> ResolvePagesForViewModels(Func<ViewModelDefinition, bool> definitionFilter)
         {
             return ResolveViewModelsByDefinition(definitionFilter)
-                .Select(vm => ResolvePageForViewModel(vm))
+                .Select(ResolvePageForViewModel)
                 .ToList();
         }
 
+        public ViewModelDefinition ResolveDefinitionForViewModel<TViewModel>()
+            where TViewModel : BaseViewModel
+            => ResolveDefinitionForViewModel(_container.Resolve<TViewModel>());
+
+        public ViewModelDefinition ResolveDefinitionForViewModel(BaseViewModel viewModel)
+            => viewModel.Definition;
+
         public List<Page> ResolvePagesForViewModels(List<BaseViewModel> viewModels)
         {
-            return viewModels.Select(vm => ResolvePageForViewModel(vm)).ToList();
+            return viewModels.Select(ResolvePageForViewModel).ToList();
+        }
+
+        private ViewModelDefinition registerPageForViewModel(Type viewModelType, Type pageType)
+        {
+            _container.Register(viewModelType);
+            var viewModelInstance = (BaseViewModel)_container.Resolve(viewModelType);
+            viewModelInstance.Definition = new ViewModelDefinition();
+
+            var pageInstance = Activator.CreateInstance(pageType) as Page;
+            if (pageInstance == null)
+            {
+                throw new InvalidOperationException(
+                    EXCEPTION_CANNOT_CREATE_PAGE(pageType, viewModelType));
+            }
+
+            pageInstance.BindingContext = viewModelInstance;
+            _map[viewModelInstance] = pageInstance;
+
+            return viewModelInstance.Definition;
         }
     }
 }

@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>3.0.0-alpha1</version>
+    <version>3.0.0-alpha2</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Improve GetResult</releaseNotes>
+    <releaseNotes>Add VM registration in PathwayApplication</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>xamarin forms mvvm mvp framework</tags>
     <dependencies>

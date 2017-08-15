@@ -3,6 +3,7 @@ using MVPathway.Integration.Services.Contracts;
 using MVPathway.Integration.ViewModels;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters;
+using MVPathway.Utils.Presenters;
 
 namespace MVPathway.Integration
 {
@@ -20,8 +21,8 @@ namespace MVPathway.Integration
 
         public async void Start()
         {
-            _vmDefiner.DefineInitial();
-            await _vmDefiner.RedefineBasedOnPresenterType(typeof(SinglePagePresenter));
+            _vmDefiner.Init();
+            await _vmDefiner.RedefineBasedOnPresenterType(typeof(TabbedPresenter));
 
             await _navigator.Show<AViewModel>();
         }

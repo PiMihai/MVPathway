@@ -1,4 +1,5 @@
-﻿using MVPathway.Builder.Abstractions;
+﻿using DryIoc;
+using MVPathway.Builder.Abstractions;
 using MVPathway.Integration.Builder;
 using MVPathway.Integration.Services;
 using MVPathway.Integration.Services.Contracts;
@@ -21,6 +22,11 @@ namespace MVPathway.Integration
             builder.UseAppStart<IntegrationAppStart>()
                    .UseNavigationStackDebugger()
                    .UseLogViewer();
+        }
+
+        public override void ConfigureViewModels(IViewModelManager vmManager)
+        {
+            vmManager.AutoScanAndRegister(GetType().GetAssembly());
         }
 
         public override void ConfigureServices(IDiContainer container)

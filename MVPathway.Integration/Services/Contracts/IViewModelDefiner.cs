@@ -5,7 +5,7 @@ namespace MVPathway.Integration.Services.Contracts
 {
     public interface IViewModelDefiner
     {
-        void DefineInitial();
+        void Init();
         Task RedefineBasedOnPresenterType(Type presenterType);
     }
 }
