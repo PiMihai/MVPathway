@@ -1,10 +1,10 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Newtonsoft.Json": "9.0.1",
-    "System.ValueTuple": "4.3.1",
-    "Xam.Plugins.Settings": "2.5.8",
-    "Xamarin.Forms": "2.3.4.247"
+    "Newtonsoft.Json": "10.0.3",
+    "System.ValueTuple": "4.4.0",
+    "Xam.Plugins.Settings": "3.0.1",
+    "Xamarin.Forms": "2.3.4.267"
   },
   "frameworks": {
     ".NETPortable,Version=v4.5,Profile=Profile7": {}
