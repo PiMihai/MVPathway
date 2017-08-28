@@ -26,6 +26,7 @@ namespace MVPathway.Navigation.Abstractions
 
         Task Close(object parameter = null);
 
-        Task DisplayAlertAsync(string title, string message, string okText, string cancelText = null);
+        Task DisplayAlertAsync(string title, string message, string okText);
+        Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText);
     }
 }

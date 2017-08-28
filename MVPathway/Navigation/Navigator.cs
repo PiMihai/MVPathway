@@ -207,10 +207,16 @@ namespace MVPathway.Navigation
             }
         }
 
-        public async Task DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        public async Task DisplayAlertAsync(string title, string message, string okText)
         {
             var presenter = _container.Resolve<IPresenter>();
-            await presenter.OnDisplayAlert(title, message, okText, cancelText);
+            await presenter.OnDisplayAlert(title, message, okText);
+        }
+
+        public async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        {
+            var presenter = _container.Resolve<IPresenter>();
+            return await presenter.OnDisplayAlert(title, message, okText, cancelText);
         }
 
         private async Task callOnNavigatedTo<TViewModel>(TViewModel viewModel, object parameter = null)
