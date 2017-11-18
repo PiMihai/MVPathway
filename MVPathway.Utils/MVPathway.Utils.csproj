@@ -1,34 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Xamarin.Forms.Maps" Version="2.5.0.91635" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+        <PackageReference Include="Xamarin.Forms.Maps" Version="2.5.0.91635" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MVPathway\MVPathway.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MVPathway\MVPathway.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="2.0.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Update="NETStandard.Library" Version="2.0.1" />
+    </ItemGroup>
 
     <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>MVPathway.Utils</PackageId>
         <PackageVersion>3.0.0-alpha5</PackageVersion>
         <Authors>Mihai Pirvu</Authors>
         <Description>Utility package for MVPathway</Description>
-        <LicenseUrl>https://github.com/UizzUW/MVPathway/blob/master/LICENSE</LicenseUrl>
-        <ProjectUrl>https://github.com/UizzUW/MVPathway</ProjectUrl>
-        <IconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</IconUrl>
+        <PackageLicenseUrl>https://github.com/UizzUW/MVPathway/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/UizzUW/MVPathway</PackageProjectUrl>
+        <PackageIconUrl>https://raw.githubusercontent.com/UizzUW/MVPathway/master/icon.png</PackageIconUrl>
+        <RepositoryUrl>https://github.com/UizzUW/MVPathway</RepositoryUrl>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>alpha</PackageReleaseNotes>
-        <PackageTags>mvpathway xamarin forms mvvm mvp framework di ioc pubsub presenter roam</PackageTags>
+        <PackageTags>mvpathway xamarin forms mvvm mvp framework di ioc pubsub presenter utils roam</PackageTags>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
     </PropertyGroup>
 
 </Project>
