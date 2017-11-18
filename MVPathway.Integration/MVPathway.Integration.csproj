@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MVPathway.Navigator\MVPathway.Navigator.csproj" />
     <ProjectReference Include="..\MVPathway.Roam\MVPathway.Roam.csproj" />
     <ProjectReference Include="..\MVPathway.Utils\MVPathway.Utils.csproj" />
     <ProjectReference Include="..\MVPathway\MVPathway.csproj" />
