@@ -20,9 +20,7 @@ namespace MVPathway.Presenters
 
         public abstract Task<bool> OnDisplayAlert(string title, string message, string okText, string cancelText = null);
 
-        public virtual async Task Init()
-        {
-        }
+        public virtual Task Init() => Task.CompletedTask;
 
         public abstract Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType);
 

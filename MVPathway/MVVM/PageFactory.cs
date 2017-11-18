@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using MVPathway.MVVM.Abstractions;
 
 namespace MVPathway.MVVM
 {
@@ -25,7 +26,7 @@ namespace MVPathway.MVVM
             }
 
             var vmType = viewModel.GetType();
-            if(!mTypeMap.ContainsKey(vmType))
+            if (!mTypeMap.ContainsKey(vmType))
             {
                 throw new Exception(cNoPageRegisteredForViewModelError);
             }

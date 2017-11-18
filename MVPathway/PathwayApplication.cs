@@ -13,10 +13,13 @@ namespace MVPathway
 {
     public abstract class PathwayApplication : Application
     {
+        public virtual IDiContainer Container { get; } = new DiContainer();
+
+        public virtual void BeforeConfigure() { }
+
         public virtual void Configure(IPathwayBuilder builder)
         {
-            builder.UseDiContainer<DiContainer>()
-                   .UseLogger<PathwayLogger>()
+            builder.UseLogger<PathwayLogger>()
                    .UseSettings<ISettingsRepository, SettingsRepository>()
                    .UseViewModelManager<ViewModelManager>()
                    .UseMessenger<Messenger>()
@@ -24,8 +27,6 @@ namespace MVPathway
                    .UsePresenter<SinglePagePresenter>();
         }
 
-        public abstract void ConfigureViewModels(IViewModelManager vmManager);
-
-        public virtual void ConfigureServices(IDiContainer container) { }
+        public virtual void AfterConfigure() { }
     }
 }

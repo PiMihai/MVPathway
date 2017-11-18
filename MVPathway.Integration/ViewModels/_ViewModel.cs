@@ -3,6 +3,7 @@ using MVPathway.Integration.ViewModels.ViewObjects;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters;
+using MVPathway.Roam;
 using MVPathway.Utils.Presenters;
 using MVPathway.Utils.ViewModels.ViewObjects;
 using System;
@@ -44,7 +45,7 @@ namespace MVPathway.Integration.ViewModels
                 }
                 _cacheService.PresenterType = value;
                 OnPropertyChanged();
-                ChangePresenterCommand.Execute(value);
+                //ChangePresenterCommand.Execute(value);
             }
         }
 
@@ -113,10 +114,10 @@ namespace MVPathway.Integration.ViewModels
         public LogViewObject Log { get; }
 
         protected _ViewModel(INavigator navigator,
-                          IViewModelDefiner vmDefiner,
-                          ICacheService cacheService,
-                          LogViewObject log,
-                          NavigationStackDebuggerViewObject stackDebugger)
+                             IViewModelDefiner vmDefiner,
+                             ICacheService cacheService,
+                             LogViewObject log,
+                             NavigationStackDebuggerViewObject stackDebugger)
         {
             _navigator = navigator;
             _vmDefiner = vmDefiner;
@@ -134,7 +135,8 @@ namespace MVPathway.Integration.ViewModels
                 typeof(SinglePagePresenter),
                 typeof(StackPresenter),
                 typeof(MasterDetailPresenter),
-                typeof(TabbedPresenter)
+                typeof(TabbedPresenter),
+                typeof(RoamPresenter)
             });
             SelectedPresenter = SelectedPresenter ?? Presenters?.Last();
         }

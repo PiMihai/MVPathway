@@ -1,7 +1,6 @@
 ﻿using MVPathway.Builder.Abstractions;
 using MVPathway.Logging.Abstractions;
 using MVPathway.Messages.Abstractions;
-using MVPathway.MVVM;
 using MVPathway.MVVM.Abstractions;
 using MVPathway.Navigation.Abstractions;
 using MVPathway.Presenters.Abstractions;
@@ -21,25 +20,14 @@ namespace MVPathway.Builder
 
         public IDiContainer Container { get; private set; }
 
-        internal PathwayBuilder()
+        internal PathwayBuilder(IDiContainer container)
         {
-        }
-
-        public IPathwayBuilder UseDiContainer<TDiContainer>(Action<TDiContainer> configure = null)
-          where TDiContainer : class, IDiContainer
-        {
-            Container = Activator.CreateInstance<TDiContainer>();
-            Container.RegisterInstance(Container);
-
-            configure?.Invoke((TDiContainer) Container);
-
-            return this;
+            Container = container;
         }
 
         public IPathwayBuilder UseLogger<TLogger>(Action<TLogger> configure = null)
             where TLogger : class, ILogger
         {
-            ensureDiContainerLoaded();
             Container.Register<ILogger, TLogger>();
 
             if (configure != null)
@@ -54,7 +42,6 @@ namespace MVPathway.Builder
             where TSettingsInterface : ISettingsRepository
             where TSettingsConcrete : class, TSettingsInterface
         {
-            ensureDiContainerLoaded();
             Container.Register<TSettingsInterface, TSettingsConcrete>();
 
             if (configure != null)
@@ -68,7 +55,6 @@ namespace MVPathway.Builder
         public IPathwayBuilder UseViewModelManager<TViewModelManager>(Action<TViewModelManager> configure = null)
             where TViewModelManager : class, IViewModelManager
         {
-            ensureDiContainerLoaded();
             Container.Register<IViewModelManager, TViewModelManager>();
 
             if (configure != null)
@@ -82,7 +68,6 @@ namespace MVPathway.Builder
         public IPathwayBuilder UseMessenger<TMessenger>(Action<TMessenger> configure = null)
             where TMessenger : class, IMessenger
         {
-            ensureDiContainerLoaded();
             Container.Register<IMessenger, TMessenger>();
 
             if (configure != null)
@@ -96,7 +81,6 @@ namespace MVPathway.Builder
         public IPathwayBuilder UseNavigator<TNavigator>(Action<TNavigator> configure = null)
             where TNavigator : class, INavigator
         {
-            ensureDiContainerLoaded();
             Container.Register<INavigator, TNavigator>();
 
             if (configure != null)
@@ -110,7 +94,6 @@ namespace MVPathway.Builder
         public IPathwayBuilder UsePresenter<TPresenter>(Action<TPresenter> configure = null)
             where TPresenter : class, IPresenter
         {
-            ensureDiContainerLoaded();
             Container.Register<IPresenter, TPresenter>();
 
             if (configure != null)
@@ -124,7 +107,6 @@ namespace MVPathway.Builder
         public IPathwayBuilder UseAppStart<TAppStart>()
             where TAppStart : class, IAppStart
         {
-            ensureDiContainerLoaded();
             Container.Register<IAppStart, TAppStart>();
 
             return this;
@@ -150,14 +132,6 @@ namespace MVPathway.Builder
 
             var navigator = Container.Resolve<INavigator>();
             _navigatorConfig?.Invoke(navigator);
-        }
-
-        private void ensureDiContainerLoaded()
-        {
-            if (Container == null)
-            {
-                Container = new DiContainer();
-            }
         }
     }
 }

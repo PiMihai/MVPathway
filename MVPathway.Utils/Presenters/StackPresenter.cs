@@ -41,9 +41,8 @@ namespace MVPathway.Utils.Presenters
             await OnUiThread(() => Application.Current.MainPage = NavigationPage);
         }
 
-        public override async Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
-        {
-        }
+        public override Task OnClose(BaseViewModel viewModel, Page page, NavigationRequestType requestType)
+            => Task.CompletedTask;
 
         public override async Task<bool> OnDisplayAlert(string title, string message, string okText, string cancelText = null)
         {

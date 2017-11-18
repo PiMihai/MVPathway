@@ -21,8 +21,8 @@ namespace MVPathway.Integration
 
         public async void Start()
         {
-            _vmDefiner.Init();
-            await _vmDefiner.RedefineBasedOnPresenterType(typeof(TabbedPresenter));
+            //_vmDefiner.Init();
+            //await _vmDefiner.RedefineBasedOnPresenterType(typeof(TabbedPresenter));
 
             await _navigator.Show<AViewModel>();
         }

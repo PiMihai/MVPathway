@@ -11,12 +11,15 @@ namespace MVPathway.Builder
           where TApp : PathwayApplication
         {
             var app = Activator.CreateInstance<TApp>();
+            app.Container.RegisterInstance(app.Container);
 
-            var builder = new PathwayBuilder();
+            var builder = new PathwayBuilder(app.Container);
+
+            app.BeforeConfigure();
             app.Configure(builder);
-            app.ConfigureServices(builder.Container);
-            platformSetup?.Invoke(builder.Container);
-            app.ConfigureViewModels(builder.Container.Resolve<IViewModelManager>());
+            app.AfterConfigure();
+            platformSetup?.Invoke(app.Container);
+
             builder.Build();
 
             builder.Container.Resolve<IAppStart>().Start();

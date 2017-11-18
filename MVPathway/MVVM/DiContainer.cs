@@ -9,6 +9,7 @@ namespace MVPathway.MVVM
         private readonly IContainer _container = new Container();
 
         public bool IsRegistered<T>() => _container.IsRegistered<T>();
+        public bool IsRegistered(Type type) => _container.IsRegistered(type);
 
         public void Register(Type type, bool asSingleton = true)
         {
@@ -50,8 +51,15 @@ namespace MVPathway.MVVM
             _container.Register<TInterface, TConcrete>(reuse);
         }
 
-        public object Resolve(Type type) => _container.Resolve(type);
+        public object Resolve(Type type)
+        {
+            if (!IsRegistered(type))
+            {
+                return null;
+            }
+            return _container.Resolve(type);
+        }
 
-        public T Resolve<T>() => _container.Resolve<T>();
+        public T Resolve<T>() => (T)Resolve(typeof(T));
     }
 }

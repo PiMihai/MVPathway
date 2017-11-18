@@ -15,7 +15,13 @@ namespace MVPathway.MVVM
 
         private readonly IDiContainer _container;
         private readonly ILogger _logger;
-        private readonly Dictionary<BaseViewModel, Page> _map = new Dictionary<BaseViewModel, Page>();
+
+        private readonly Dictionary<Type, ViewModelDefinition> _definitionMap
+            = new Dictionary<Type, ViewModelDefinition>();
+        private readonly Dictionary<BaseViewModel, Page> _pageCache
+            = new Dictionary<BaseViewModel, Page>();
+        private readonly Dictionary<Type, Func<Page>> _pageFactories
+            = new Dictionary<Type, Func<Page>>();
 
         public ViewModelManager(IDiContainer container, ILogger logger)
         {
@@ -42,29 +48,66 @@ namespace MVPathway.MVVM
                 {
                     continue;
                 }
-                registerPageForViewModel(viewModelType.AsType(), pageType.AsType());
+                RegisterPageForViewModel(viewModelType.AsType(), pageType.AsType());
             }
         }
 
         public ViewModelDefinition RegisterPageForViewModel<TViewModel, TPage>()
             where TViewModel : BaseViewModel
             where TPage : class
-            => registerPageForViewModel(typeof(TViewModel), typeof(TPage));
+            => RegisterPageForViewModel(typeof(TViewModel), typeof(TPage));
+
+        public ViewModelDefinition RegisterPageForViewModel(Type viewModelType, Type pageType)
+        {
+            _container.Register(viewModelType);
+
+            if (_definitionMap.ContainsKey(viewModelType))
+            {
+                _definitionMap.Remove(viewModelType);
+            }
+            _definitionMap[viewModelType] = new ViewModelDefinition();
+
+            _pageFactories[viewModelType] = () =>
+            {
+                var viewModelInstance = (BaseViewModel)_container.Resolve(viewModelType);
+                viewModelInstance.Definition = _definitionMap[viewModelType];
+
+                var pageInstance = Activator.CreateInstance(pageType) as Page;
+                if (pageInstance == null)
+                {
+                    throw new InvalidOperationException(
+                        EXCEPTION_CANNOT_CREATE_PAGE(pageType, viewModelType));
+                }
+
+                pageInstance.BindingContext = viewModelInstance;
+                _pageCache[viewModelInstance] = pageInstance;
+                return pageInstance;
+            };
+
+            return _definitionMap[viewModelType];
+        }
 
         public BaseViewModel ResolveViewModelByDefinition(Func<ViewModelDefinition, bool> definitionFilter)
         {
-            return _map.Keys.FirstOrDefault(x => definitionFilter(x.Definition));
+            return ResolveViewModelsByDefinition(definitionFilter).FirstOrDefault();
         }
 
-        public List<BaseViewModel> ResolveViewModelsByDefinition(Func<ViewModelDefinition, bool> definitionFilter)
+        public IEnumerable<BaseViewModel> ResolveViewModelsByDefinition(Func<ViewModelDefinition, bool> definitionFilter)
         {
-            return _map.Keys.Where(x => definitionFilter(x.Definition)).ToList();
+            return _definitionMap.Where(x => definitionFilter(x.Value))
+                .Select(x => _container.Resolve(x.Key))
+                .Cast<BaseViewModel>();
         }
 
         public Page ResolvePageForViewModel<TViewModel>()
           where TViewModel : BaseViewModel
         {
-            var viewModel = _container.Resolve<TViewModel>();
+            return ResolvePageForViewModel(typeof(TViewModel));
+        }
+
+        public Page ResolvePageForViewModel(Type viewModelType)
+        {
+            var viewModel = (BaseViewModel)_container.Resolve(viewModelType);
             return ResolvePageForViewModel(viewModel);
         }
 
@@ -76,50 +119,35 @@ namespace MVPathway.MVVM
 
         public Page ResolvePageForViewModel(BaseViewModel viewModel)
         {
-            if (!_map.ContainsKey(viewModel))
+            var viewModelType = viewModel.GetType();
+            if (!_pageFactories.ContainsKey(viewModelType))
             {
                 throw new InvalidOperationException(
-                    EXCEPTION_NO_PAGE_REGISTERED_FOR_VM(viewModel.GetType()));
+                    EXCEPTION_NO_PAGE_REGISTERED_FOR_VM(viewModelType));
             }
-            return _map[viewModel];
+            if (!_pageCache.Keys.Any(k => k.GetType() == viewModelType))
+            {
+                var page = _pageFactories[viewModelType].Invoke();
+                _pageCache[viewModel] = page;
+            }
+            return _pageCache[viewModel];
         }
 
-        public List<Page> ResolvePagesForViewModels(Func<ViewModelDefinition, bool> definitionFilter)
+        public IEnumerable<Page> ResolvePagesForViewModels(Func<ViewModelDefinition, bool> definitionFilter)
         {
             return ResolveViewModelsByDefinition(definitionFilter)
-                .Select(ResolvePageForViewModel)
-                .ToList();
+                .Select(ResolvePageForViewModel);
         }
-
-        public ViewModelDefinition ResolveDefinitionForViewModel<TViewModel>()
-            where TViewModel : BaseViewModel
-            => ResolveDefinitionForViewModel(_container.Resolve<TViewModel>());
-
-        public ViewModelDefinition ResolveDefinitionForViewModel(BaseViewModel viewModel)
-            => viewModel.Definition;
 
         public List<Page> ResolvePagesForViewModels(List<BaseViewModel> viewModels)
         {
             return viewModels.Select(ResolvePageForViewModel).ToList();
         }
 
-        private ViewModelDefinition registerPageForViewModel(Type viewModelType, Type pageType)
+        public ViewModelDefinition ResolveDefinitionForViewModel<TViewModel>()
+            where TViewModel : BaseViewModel
         {
-            _container.Register(viewModelType);
-            var viewModelInstance = (BaseViewModel)_container.Resolve(viewModelType);
-            viewModelInstance.Definition = new ViewModelDefinition();
-
-            var pageInstance = Activator.CreateInstance(pageType) as Page;
-            if (pageInstance == null)
-            {
-                throw new InvalidOperationException(
-                    EXCEPTION_CANNOT_CREATE_PAGE(pageType, viewModelType));
-            }
-
-            pageInstance.BindingContext = viewModelInstance;
-            _map[viewModelInstance] = pageInstance;
-
-            return viewModelInstance.Definition;
+            return _definitionMap[typeof(TViewModel)];
         }
     }
 }

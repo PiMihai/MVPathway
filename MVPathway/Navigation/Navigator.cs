@@ -14,15 +14,17 @@ namespace MVPathway.Navigation
 {
     public class Navigator : INavigator
     {
-        private const string EXCEPTION_NULL_VM_INSTANCE = "Received ViewModel show request, but instance was null.";
+        private const string ERROR_NULL_VM_INSTANCE = "Received ViewModel show request but instance was null.";
+        private const string ERROR_SHOW_NO_VM_SATISFIED_PREDICATE = "Received ViewModel show by definition request but no ViewModel definition satisfied predicate.";
+        private string ERROR_NULL_TYPED_VM_INSTANCE(Type viewModelType) => $"Received show request for {viewModelType.Name} but instance was null.";
 
         private const string ERROR_VM_STACK_EMPTY = "Received close request but VM stack is empty.";
 
-        private string WARNING_VM_ALREADY_SHOWN(Type viewModelType) => $"Received show request for {viewModelType.Name}, but VM already shown. Navigator will go back to that ViewModel.";
+        private string WARNING_VM_ALREADY_SHOWN(Type viewModelType) => $"Received show request for {viewModelType.Name} but VM already shown. Navigator will go back to that ViewModel.";
         private string WARNING_VM_STACK_ROOT_REACHED = "Received close request but already reached stack root.";
 
-        private string INFO_ON_NAVIGATED_TO(Type viewModelType) => $"{viewModelType.Name} OnNavigatedTo called.";
-        private string INFO_ON_NAVIGATING_FROM(Type viewModelType) => $"{viewModelType.Name} OnNavigatingFrom called.";
+        private string INFO_ON_NAVIGATED_TO(Type viewModelType) => $"{viewModelType.Name} ONT called.";
+        private string INFO_ON_NAVIGATING_FROM(Type viewModelType) => $"{viewModelType.Name} ONF called.";
 
         private readonly IDiContainer _container;
         private readonly ILogger _logger;
@@ -81,23 +83,34 @@ namespace MVPathway.Navigation
                   where TViewModel : BaseViewModel
         {
             var viewModel = _container.Resolve<TViewModel>();
+            if (viewModel == null)
+            {
+                _logger.LogError(ERROR_NULL_TYPED_VM_INSTANCE(typeof(TViewModel)));
+                return;
+            }
             await Show(viewModel, parameter);
         }
 
         public async Task Show(Func<ViewModelDefinition, bool> definitionFilter, object parameter = null)
         {
             var viewModel = _vmManager.ResolveViewModelByDefinition(definitionFilter);
+            if (viewModel == null)
+            {
+                _logger.LogError(ERROR_SHOW_NO_VM_SATISFIED_PREDICATE);
+                return;
+            }
             await Show(viewModel, parameter);
         }
 
         public async Task Show(BaseViewModel viewModel, object parameter = null)
         {
-            var presenter = _container.Resolve<IPresenter>();
-
             if (viewModel == null)
             {
-                throw new ArgumentNullException(EXCEPTION_NULL_VM_INSTANCE);
+                _logger.LogError(ERROR_NULL_VM_INSTANCE);
+                return;
             }
+
+            var presenter = _container.Resolve<IPresenter>();
 
             var viewModelType = viewModel.GetType();
             if (_navigationStack.Count > 0)
@@ -118,7 +131,7 @@ namespace MVPathway.Navigation
                     NavigationRequestType.FromShow);
                 DuringRequestedTransition = false;
 
-                await callOnNavigatingFrom(_navigationStack.Peek(), null);
+                await callOnNavigatingFrom(_navigationStack.Peek());
             }
             _navigationStack.Push(viewModel);
             _messenger.Send(new NavigationStackUpdatedMessage
@@ -135,7 +148,6 @@ namespace MVPathway.Navigation
             await callOnNavigatedTo(viewModel, parameter);
         }
 
-
         public async Task<ViewModelResult<TResult>> GetResult<TViewModel, TResult>(object parameter = null)
             where TViewModel : BaseResultViewModel<TResult>
         {
@@ -151,11 +163,9 @@ namespace MVPathway.Navigation
 
         public async Task<ViewModelResult<TResult>> GetResult<TResult>(BaseResultViewModel<TResult> viewModel, object parameter = null)
         {
-            var presenter = _container.Resolve<IPresenter>();
-
             if (viewModel == null)
             {
-                throw new ArgumentNullException(EXCEPTION_NULL_VM_INSTANCE);
+                _logger.LogError(ERROR_NULL_VM_INSTANCE);
             }
 
             var resultTask = viewModel.ResultTask;
@@ -203,7 +213,7 @@ namespace MVPathway.Navigation
                     NavigationRequestType.FromClose);
                 DuringRequestedTransition = false;
 
-                await callOnNavigatedTo(currentViewModel, null);
+                await callOnNavigatedTo(currentViewModel);
             }
         }
 
@@ -213,7 +223,7 @@ namespace MVPathway.Navigation
             await presenter.OnDisplayAlert(title, message, okText);
         }
 
-        public async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText = null)
+        public async Task<bool> DisplayAlertAsync(string title, string message, string okText, string cancelText)
         {
             var presenter = _container.Resolve<IPresenter>();
             return await presenter.OnDisplayAlert(title, message, okText, cancelText);

@@ -10,8 +10,6 @@ namespace MVPathway.Builder.Abstractions
 {
     public interface IPathwayBuilder
     {
-        IPathwayBuilder UseDiContainer<TDiContainer>(Action<TDiContainer> configure = null)
-            where TDiContainer : class, IDiContainer;
         IPathwayBuilder UseMessenger<TMessenger>(Action<TMessenger> configure = null)
             where TMessenger : class, IMessenger;
         IPathwayBuilder UseLogger<TLogger>(Action<TLogger> configure = null)

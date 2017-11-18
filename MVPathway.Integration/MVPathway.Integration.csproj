@@ -1,183 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D7A011A3-04BB-4984-9D9D-4B6DCEEB2449}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MVPathway.Integration</RootNamespace>
-    <AssemblyName>MVPathway.Integration</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AppVeyor-Release|AnyCPU'">
-    <OutputPath>bin\AppVeyor-Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Builder\PathwayBuilderExtensions.cs" />
-    <Compile Include="IntegrationAppStart.cs" />
-    <Compile Include="Messages\LogMessage.cs" />
-    <Compile Include="Pages\APage.xaml.cs">
-      <DependentUpon>APage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\BPage.xaml.cs">
-      <DependentUpon>BPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\CPage.xaml.cs">
-      <DependentUpon>CPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\DPage.xaml.cs">
-      <DependentUpon>DPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\EPage.xaml.cs">
-      <DependentUpon>EPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\FPage.xaml.cs">
-      <DependentUpon>FPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\GPage.xaml.cs">
-      <DependentUpon>GPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\HPage.xaml.cs">
-      <DependentUpon>HPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\CacheService.cs" />
-    <Compile Include="Services\Contracts\ICacheService.cs" />
-    <Compile Include="Services\Contracts\IViewModelDefiner.cs" />
-    <Compile Include="Services\BroadcastLogger.cs" />
-    <Compile Include="Services\ViewModelDefiner.cs" />
-    <Compile Include="ViewModels\AViewModel.cs" />
-    <Compile Include="ViewModels\BViewModel.cs" />
-    <Compile Include="ViewModels\CViewModel.cs" />
-    <Compile Include="ViewModels\DViewModel.cs" />
-    <Compile Include="ViewModels\EViewModel.cs" />
-    <Compile Include="ViewModels\FViewModel.cs" />
-    <Compile Include="ViewModels\GViewModel.cs" />
-    <Compile Include="ViewModels\HViewModel.cs" />
-    <Compile Include="ViewModels\ViewObjects\LogViewObject.cs" />
-    <Compile Include="ViewModels\_ViewModel.cs" />
-    <Compile Include="Views\LogView.xaml.cs">
-      <DependentUpon>LogView.xaml</DependentUpon>
-    </Compile>
+    <Compile Remove="Services\TaskRunner.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="App.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+    <PackageReference Include="Xamarin.Forms" Version="2.5.0.91635" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="project.json" />
+    <ProjectReference Include="..\MVPathway.Navigator\MVPathway.Navigator.csproj" />
+    <ProjectReference Include="..\MVPathway.Roam\MVPathway.Roam.csproj" />
+    <ProjectReference Include="..\MVPathway.Utils\MVPathway.Utils.csproj" />
+    <ProjectReference Include="..\MVPathway\MVPathway.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Pages\APage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <PackageReference Update="NETStandard.Library" Version="2.0.1" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\BPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\CPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\DPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\EPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\FPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\GPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\HPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MVPathway.Utils\MVPathway.Utils.csproj">
-      <Project>{94ca7246-1361-4d10-b8e3-458b3ea5a4dd}</Project>
-      <Name>MVPathway.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MVPathway\MVPathway.csproj">
-      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>MVPathway</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\LogView.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties project_1json__JSONSchema="http://json.schemastore.org/project" />
-    </VisualStudio>
-  </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

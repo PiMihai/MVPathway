@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Xamarin.Forms.Maps" Version="2.5.0.91635" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MVPathway\MVPathway.csproj" />
   </ItemGroup>
 
