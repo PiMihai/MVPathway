@@ -5,8 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-        <PackageReference Include="Xamarin.Forms.Maps" Version="2.5.0.91635" />
+        <PackageReference Include="Xamarin.Forms" Version="2.5.1.444934" />
+        <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -14,7 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Update="NETStandard.Library" Version="2.0.1" />
+        <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="NavigationStackDebuggerView.xaml.cs">
+            <DependentUpon>*.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <PropertyGroup>
