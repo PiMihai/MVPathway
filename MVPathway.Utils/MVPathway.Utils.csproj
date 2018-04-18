@@ -23,7 +23,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>MVPathway.Utils</PackageId>
-        <PackageVersion>3.0.0-alpha5</PackageVersion>
+        <PackageVersion>3.0.0-alpha6</PackageVersion>
         <Authors>Mihai Pirvu</Authors>
         <Description>Utility package for MVPathway</Description>
         <PackageLicenseUrl>https://github.com/UizzUW/MVPathway/blob/master/LICENSE</PackageLicenseUrl>
@@ -33,7 +33,6 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>alpha</PackageReleaseNotes>
         <PackageTags>mvpathway xamarin forms mvvm mvp framework di ioc pubsub presenter utils roam</PackageTags>
-        <AssemblyVersion>3.0.0.0</AssemblyVersion>
     </PropertyGroup>
 
 </Project>
