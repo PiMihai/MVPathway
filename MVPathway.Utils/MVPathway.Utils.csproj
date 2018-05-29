@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="2.5.1.444934" />
+        <PackageReference Include="Xamarin.Forms" Version="3.0.0.482510" />
         <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     </ItemGroup>
 
@@ -23,7 +23,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>MVPathway.Utils</PackageId>
-        <PackageVersion>3.0.0-alpha6</PackageVersion>
+        <PackageVersion>3.0.0-alpha7</PackageVersion>
         <Authors>Mihai Pirvu</Authors>
         <Description>Utility package for MVPathway</Description>
         <PackageLicenseUrl>https://github.com/UizzUW/MVPathway/blob/master/LICENSE</PackageLicenseUrl>
